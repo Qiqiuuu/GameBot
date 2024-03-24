@@ -1,7 +1,7 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-
+from cogs.helpClasses.buttonsDuel import duelView
 
 
 
@@ -16,15 +16,8 @@ class rockPaperScissors(commands.Cog):
 
       embed.set_thumbnail(url = challengeduser.display_avatar.url)
       
-      button = discord.Button(
-          label='Accept Duel',
-          style=discord.ButtonStyle.green
-      )
-      action_row = discord.ActionRow(button)
-
-      
-      
-      await interaction.response.send_message(embed=embed,components=[action_row])
+      view = duelView(challengeduser,interaction.user)
+      await interaction.response.send_message(embed=embed,view=view)
 
 
 
