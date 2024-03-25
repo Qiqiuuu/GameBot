@@ -16,7 +16,7 @@ class rockPaperScissors(commands.Cog):
 
       embed.set_thumbnail(url = challengeduser.display_avatar.url)
       
-      view = duelView(challengeduser,interaction.user)
+      view = duelView(self.bot,challengeduser,interaction.user)
       await interaction.response.send_message(embed=embed,view=view)
 
 

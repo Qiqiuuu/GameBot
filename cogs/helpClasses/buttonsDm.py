@@ -1,10 +1,14 @@
 import discord
 from discord import emoji
+import asyncio
+
+from discord import interactions
 
 
 class dmView(discord.ui.View):
-  def __init__(self, challengedUser):
+  def __init__(self, challengedUser,bot):
       super().__init__()
+      self.bot = bot
       self.value = None
       self.challengedUserId = challengedUser.id
       self.chosenHand = None
@@ -38,4 +42,10 @@ class dmView(discord.ui.View):
     self.stop()
 
   async def getHand(self):
-    return self.chosenHand
+    try:
+      await self.bot.wait_for('interaction', timeout=30,check = self.interaction_check)
+      print(self.chosenHand)
+      return self.chosenHand
+    except asyncio.TimeoutError:
+      return "Timed Out"
+    

@@ -4,8 +4,9 @@ from cogs.helpClasses.duelDm import duelDm
 
 
 class duelView(discord.ui.View):
-  def __init__(self, challenged,challenger):
+  def __init__(self,bot,challenged,challenger):
       super().__init__()
+      self.bot = bot
       self.value = None
       self.challenger = challenger
       self.challenged = challenged
@@ -21,7 +22,7 @@ class duelView(discord.ui.View):
       if interaction.message:
         await interaction.message.edit(view=self)
       self.stop()
-      dm = duelDm(self.challenger,self.challenged)
+      dm = duelDm(self.challenger,self.challenged,self.bot)
       print(await dm.duelDecider())
     else:
       await interaction.response.send_message('You are not the challenged user!', ephemeral=True)
