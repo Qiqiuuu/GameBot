@@ -21,9 +21,8 @@ class duelView(discord.ui.View):
       button.style = discord.ButtonStyle.grey
       if interaction.message:
         await interaction.message.edit(view=self)
-      self.stop()
-      dm = duelDm(self.challenger,self.challenged,self.bot)
-      print(await dm.duelDecider())
+      return button.label
+      
     else:
       await interaction.response.send_message('You are not the challenged user!', ephemeral=True)
 
@@ -35,9 +34,8 @@ class duelView(discord.ui.View):
       button.style = discord.ButtonStyle.grey
       if interaction.message:
         await interaction.message.edit(view=self)
-      self.stop()
+      return button.label
     else:
       await interaction.response.send_message('You are not the challenged user!', ephemeral=True)
 
 
-  

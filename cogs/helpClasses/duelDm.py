@@ -19,6 +19,7 @@ class duelDm():
     embed = discord.Embed(title="Choose your Hand:", description=f"Against: {self.chall[user]}", color=0x000000)
     view = dmView(user,self.bot)
     await user.send(embed=embed, view=view)
+    return await view.getHand()
 
 
 
@@ -36,7 +37,7 @@ class duelDm():
 
     if challengerChoice == challengedChoice:
       outcome = "tie"
-    elif challengerChoice == 'beats[challengedChoice]':
+    elif challengedChoice in beats and challengerChoice == beats[challengedChoice]:
       outcome = "loses"
     else:
       outcome = "wins"

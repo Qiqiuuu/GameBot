@@ -19,7 +19,9 @@ class rockPaperScissors(commands.Cog):
       view = duelView(self.bot,challengeduser,interaction.user)
       await interaction.response.send_message(embed=embed,view=view)
 
+    
 
+    
 
 async def setup(bot):
   await bot.add_cog(rockPaperScissors(bot))
