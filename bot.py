@@ -9,6 +9,5 @@ class gameBot(commands.Bot):
   async def on_ready(self):
     print(f'{self} has connected to Discord!')
     await self.load_extension('cogs.rockPaperScissors')
-    print('Rock Paper Scissors is loaded!')
     synced = await self.tree.sync()
     print(f'Synced {len(synced)} commands.')

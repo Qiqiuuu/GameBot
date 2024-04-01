@@ -1,47 +1,44 @@
 import discord
-from discord import client
-from discord.ext import commands
+from cogs.helpClasses.buttonsDm import DmView
 import asyncio
-from cogs.helpClasses.buttonsDm import dmView
 
 
-class duelDm():
-  def __init__(self,challenger: discord.User,challenged: discord.User,bot):
+class DuelDm():
+  def __init__(self,challengingUser, challengedUser, bot):
     self.bot = bot
-    self.challerger = challenger
-    self.challerged = challenged
-    self.chall = {challenged:challenger,
-             challenger:challenged
-            }
+    self.challengingUser = challengingUser
+    self.challengedUser = challengedUser
+    self.chall = {
+      challengedUser: challengingUser, 
+      challengingUser: challengedUser
+    }
 
   
   async def sendDm(self,user):
     embed = discord.Embed(title="Choose your Hand:", description=f"Against: {self.chall[user]}", color=0x000000)
-    view = dmView(user,self.bot)
+    view = DmView(user,self.bot)
     await user.send(embed=embed, view=view)
-
-
+    return await view.getHand()
 
 
   async def duelDecider(self):
-    challengedChoice = await self.sendDm(self.challerged)
-    challengerChoice = await self.sendDm(self.challerger)  
-    print(challengedChoice)
-    print(challengerChoice)
+    challengedChoice_coroutine = self.sendDm(self.challengedUser)
+    challengingChoice_coroutine = self.sendDm(self.challengingUser)
+    challengedChoice, challengingChoice =  await asyncio.gather(challengedChoice_coroutine, challengingChoice_coroutine)
     beats = {
       'rock': 'scissors',
       'scissors': 'paper',
       'paper': 'rock',
     }
 
-    if challengerChoice == challengedChoice:
+    if challengingChoice == challengedChoice:
       outcome = "tie"
-    elif challengerChoice == 'beats[challengedChoice]':
-      outcome = "loses"
+    elif challengedChoice in beats and challengingChoice == beats[challengedChoice]:
+      outcome = "lose"
     else:
-      outcome = "wins"
+      outcome = "win"
 
-    return outcome
+    return [outcome,challengingChoice,challengedChoice]
 
     
     
