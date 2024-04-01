@@ -1,6 +1,6 @@
 # GameBot for Discord
 GameBot with some games to play in discord
-## Files:\
+## Files
 GameBot\
 ├── bot.py - bot class\
 ├── cogs\
