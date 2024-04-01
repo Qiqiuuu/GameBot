@@ -4,7 +4,7 @@ from discord.ext import commands
 class gameBot(commands.Bot):
 
   def __init__(self):
-    super().__init__(command_prefix='!', intents = discord.Intents.all(), application_id = '1221075051202482207')
+    super().__init__(command_prefix='!', intents = discord.Intents.all())
   
   async def on_ready(self):
     print(f'{self} has connected to Discord!')
