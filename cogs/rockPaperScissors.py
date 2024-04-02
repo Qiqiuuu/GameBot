@@ -12,6 +12,10 @@ class rockPaperScissors(commands.Cog):
     
     @app_commands.command(name='rps', description='Play Rock Paper Scissors with me!')
     async def rps(self, interaction: discord.Interaction, challengeduser: discord.Member):
+
+      if challengeduser.id == interaction.user.id:
+        await interaction.response.send_message("You cannot challenge yourself!")
+        return
   
       embed = Embed(challengeduser, interaction.user)
       view = DuelView(self.bot,challengeduser,interaction.user)

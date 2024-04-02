@@ -1,16 +1,16 @@
 import discord
 
 class DuelView(discord.ui.View):
-  def __init__(self,bot,challenged,challenger):
+  def __init__(self,bot,challengingUser,challengedUser):
       super().__init__()
       self.bot = bot
       self.value = None
-      self.challenger = challenger
-      self.challenged = challenged
+      self.challengingUser = challengingUser
+      self.challengedUser = challengedUser
       self.buttonPressed = None
     
   async def handle_button(self, interaction: discord.Interaction, button: discord.ui.Button, label: str, accepted: bool):
-    if interaction.user.id == self.challenged.id:
+    if interaction.user.id == self.challengedUser.id:
       button.disabled = True
       button.label = label
       self.buttonPressed = accepted

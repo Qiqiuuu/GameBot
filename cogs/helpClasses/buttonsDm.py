@@ -1,6 +1,4 @@
 import discord
-import asyncio
-
 
 class DmView(discord.ui.View):
   def __init__(self, challengedUser, bot):
