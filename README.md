@@ -13,7 +13,7 @@ GameBot\
 │   └── rockPaperScissors.py - Rock,Paper,Scissors main class\
 ├── run.py - main file\
 └── utils\
-    └── keepAlive.py - keeps bot alive on replit\
+    └── keepAlive.py - keeps bot alive on replit
 
 ### Hope you like it :D
 
