@@ -17,16 +17,16 @@ class rockPaperScissors(commands.Cog):
         await interaction.response.send_message("You cannot challenge yourself!")
         return
   
-      embed = Embed(challengeduser, interaction.user)
-      view = DuelView(self.bot,challengeduser,interaction.user)
+      embed = Embed()
+      view = DuelView(interaction.user,challengeduser,self.bot)
       duelInstance = DuelDm(interaction.user,challengeduser,self.bot)
 
-      await interaction.response.send_message(embed=embed.challengeDuel(),view=view)
+      await interaction.response.send_message(embed=embed.challengeDuel(interaction.user,challengeduser),view=view)
 
       await view.wait()
       if(view.buttonPressed):
         outcome = await duelInstance.duelDecider()
-        await interaction.followup.send(embed=embed.returnDuel(outcome))
+        await interaction.followup.send(embed=embed.returnDuel(interaction.user,challengeduser, outcome))
       else:
         await interaction.followup.send(f"{challengeduser.mention} declined the duel")
         await interaction.response.defer()

@@ -2,7 +2,7 @@ import discord
 
 #duel class
 class DuelView(discord.ui.View):
-  def __init__(self,bot,challengingUser,challengedUser):
+  def __init__(self,challengingUser,challengedUser,bot):
       super().__init__()
       self.bot = bot
       self.value = None
