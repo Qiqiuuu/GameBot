@@ -2,7 +2,7 @@ import discord
 from cogs.helpClasses.buttonsDm import DmView
 import asyncio
 
-
+#class for duels
 class DuelDm():
   def __init__(self,challengingUser, challengedUser, bot):
     self.bot = bot
@@ -13,14 +13,14 @@ class DuelDm():
       challengingUser: challengedUser
     }
 
-  
+  #sends direct messages to the user
   async def sendDm(self,user):
     embed = discord.Embed(title="Choose your Hand:", description=f"Against: {self.chall[user]}", color=0x000000)
     view = DmView(user,self.bot)
     await user.send(embed=embed, view=view)
     return await view.getHand()
 
-
+  #gets hand from users and returns outcome 
   async def duelDecider(self):
     challengedChoice_coroutine = self.sendDm(self.challengedUser)
     challengingChoice_coroutine = self.sendDm(self.challengingUser)

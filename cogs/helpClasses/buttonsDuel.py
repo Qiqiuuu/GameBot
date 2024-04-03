@@ -1,5 +1,6 @@
 import discord
 
+#duel class
 class DuelView(discord.ui.View):
   def __init__(self,bot,challengingUser,challengedUser):
       super().__init__()
@@ -8,8 +9,9 @@ class DuelView(discord.ui.View):
       self.challengingUser = challengingUser
       self.challengedUser = challengedUser
       self.buttonPressed = None
-    
-  async def handle_button(self, interaction: discord.Interaction, button: discord.ui.Button, label: str, accepted: bool):
+
+  #main button handler
+  async def handleButton(self, interaction: discord.Interaction, button: discord.ui.Button, label: str, accepted: bool):
     if interaction.user.id == self.challengedUser.id:
       button.disabled = True
       button.label = label
@@ -22,13 +24,15 @@ class DuelView(discord.ui.View):
       await interaction.response.send_message('You are not the challenged user!', ephemeral=True)
     await interaction.response.defer()
 
+  #buttons for accpeting/declining duel
   @discord.ui.button(label='Accept Duel', style=discord.ButtonStyle.green)
   async def acceptButton(self, interaction: discord.Interaction, button: discord.ui.Button):
-    await self.handle_button(interaction, button, 'Duel Accepted', True)
+    await self.handleButton(interaction, button, 'Duel Accepted', True)
 
   @discord.ui.button(label='Decline Duel', style=discord.ButtonStyle.red)
   async def declineButton(self, interaction: discord.Interaction, button: discord.ui.Button):
-    await self.handle_button(interaction, button, 'Duel Rejected', False)
+    await self.handleButton(interaction, button, 'Duel Rejected', False)
 
+  #return pressed button 
   def getButtonPressed(self):
     return self.buttonPressed

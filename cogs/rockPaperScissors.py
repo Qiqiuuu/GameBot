@@ -5,7 +5,7 @@ from cogs.helpClasses.buttonsDuel import DuelView
 from cogs.helpClasses.duelDm import DuelDm
 from cogs.helpClasses.embed import Embed
 
-
+#main class for rps game
 class rockPaperScissors(commands.Cog):
     def __init__(self, bot):
         self.bot = bot

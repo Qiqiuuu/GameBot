@@ -1,5 +1,6 @@
 import discord
 
+#direct message class
 class DmView(discord.ui.View):
   def __init__(self, challengedUser, bot):
       super().__init__()
@@ -7,7 +8,8 @@ class DmView(discord.ui.View):
       self.value = None
       self.challengedUserId = challengedUser.id
       self.chosenHand = None
-
+    
+  #main dm button handler
   async def button(self, hand: str, interaction: discord.Interaction, button: discord.ui.Button):
       try:
           self.chosenHand = hand
@@ -19,7 +21,8 @@ class DmView(discord.ui.View):
       except Exception as e:
           print(f"Error handling {hand} button click: {e}")
       await interaction.response.defer()
-
+    
+  #creates buttons for the user to choose their hand
   @discord.ui.button(label='Rock', style=discord.ButtonStyle.blurple, emoji='🗿')
   async def rockButton(self, interaction: discord.Interaction, button: discord.ui.Button):
       await self.button("rock", interaction, button)
@@ -32,6 +35,7 @@ class DmView(discord.ui.View):
   async def scissorsButton(self, interaction: discord.Interaction, button: discord.ui.Button):
       await self.button("scissors", interaction, button)
 
+  #returns the chosen hand
   async def getHand(self):
     await self.wait()
     return self.chosenHand

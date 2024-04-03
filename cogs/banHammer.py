@@ -1,5 +1,7 @@
 from discord.ext import commands
 import asyncio
+
+#unused class for bans/kicks etc
 class BanHammer(commands.Cog):
   def __init__(self,bot):
     self.bot = bot

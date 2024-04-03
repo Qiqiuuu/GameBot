@@ -1,3 +1,6 @@
+
+#keeps bot alive on replit
+
 from flask import Flask
 from threading import Thread
 
