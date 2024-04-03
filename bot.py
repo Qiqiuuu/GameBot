@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 
+#bot class
 class gameBot(commands.Bot):
 
   def __init__(self):

@@ -1,16 +1,19 @@
 import discord
 
+#class for embeded messages
 class Embed:
   def __init__(self,challengedUser,challengingUser):
     self.challengedUser = challengedUser
     self.challengingUser = challengingUser
 
 
+  #creates embed for challenge
   def challengeDuel(self):
     embed = discord.Embed(title="Upcoming Duel ", description=f"{self.challengingUser.mention} challenged {self.challengedUser.mention} in Rock, Paper, Scissors", color=0x000000)
     embed.set_thumbnail(url = self.challengedUser.display_avatar.url)
     return embed
 
+  #creates embed for duel outcome
   def returnDuel(self,outcome):
     messageDecider = {
       "tie": f"The duel has ended as a tie between {self.challengingUser.mention} and {self.challengedUser.mention}",
@@ -22,6 +25,7 @@ class Embed:
                           ,color=0x000000)
     return embed
 
+  #defines loser of duel //unused
   def loser(self,outcome):
     loser = {
       "tie": None,
