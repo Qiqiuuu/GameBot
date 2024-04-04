@@ -1,7 +1,5 @@
-import re
 from typing import Dict, List
 import discord
-from discord import embeds
 from utils.writeDictionary import writeDictionary
 
 #class for embeded messages

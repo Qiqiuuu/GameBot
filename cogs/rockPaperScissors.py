@@ -1,10 +1,10 @@
 import discord
 from discord import app_commands
-from discord.app_commands.commands import check
 from discord.ext import commands
 from cogs.helpClasses.buttonsDuel import DuelView
-from cogs.helpClasses.embed import Embed
 from cogs.helpClasses.buttonsHand import HandView
+from cogs.helpClasses.embed import Embed
+
 
 #main class for rps game
 class rockPaperScissors(commands.Cog):
