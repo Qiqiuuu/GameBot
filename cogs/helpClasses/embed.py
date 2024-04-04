@@ -1,3 +1,4 @@
+import re
 from typing import Dict, List
 import discord
 from discord import embeds
@@ -24,6 +25,21 @@ class Embed:
       color=0x000000)
     return embed
 
+  def duelDeclined(self,challengedUser):
+    embed = discord.Embed(
+      title="Duel Declined",
+      description = f"{challengedUser.mention} chickened out!",
+      color=0x000000
+    )
+    return embed
+
+  def duelTerminated(self):
+    embed = discord.Embed(
+      title="Duel Terminated",
+      description = "Duel was terminated due to a lack of response",
+      color=0x000000
+    )
+    return embed
                       
   #creates embed for challenge
   def challengeDuel(self,challengingUser,challengedUser):

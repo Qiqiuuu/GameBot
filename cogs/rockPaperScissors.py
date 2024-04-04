@@ -1,5 +1,6 @@
 import discord
 from discord import app_commands
+from discord.app_commands.commands import check
 from discord.ext import commands
 from cogs.helpClasses.buttonsDuel import DuelView
 from cogs.helpClasses.embed import Embed
@@ -29,11 +30,14 @@ class rockPaperScissors(commands.Cog):
     if(view.buttonPressed):
       await interaction.edit_original_response(embed = embed.choseHands(duelInstance.choices()),view = duelInstance)
       choices = await duelInstance.getHands()
-      outcome = self.deciceDuel(choices)
-      await interaction.edit_original_response(embed=embed.returnDuel(self.challengingUser,self.challengedUser, outcome),view=None)
+      if self.checkIfPicked(choices):
+        outcome = self.deciceDuel(choices)
+        await interaction.edit_original_response(embed=embed.returnDuel(self.challengingUser,self.challengedUser, outcome),view=None)
+      else:
+        await interaction.edit_original_response(embed=embed.duelTerminated(),view=None)
     else:
-      await interaction.followup.send(f"{challengeduser.mention} declined the duel")
-      await interaction.response.defer()
+      await interaction.edit_original_response(embed=embed.duelDeclined(self.challengedUser),view=None)
+    await interaction.response.defer() if not interaction.response.is_done() else None
 
 
   def deciceDuel(self,choice: dict):
@@ -43,7 +47,6 @@ class rockPaperScissors(commands.Cog):
       '📄': '🗿',
     }
     hand = list(choice.values())
-    print(hand)
     if hand[0].name == hand[1].name:
       outcome = "tie"
     elif hand[0].name == beats[hand[1].name]:
@@ -54,7 +57,12 @@ class rockPaperScissors(commands.Cog):
     ret = {self.challengingUser: hand[0].name,self.challengedUser: hand[1].name}
 
     return [outcome,ret]
+
+  def checkIfPicked(self,choice: dict):
+    hand = list(choice.values())
+    return all(i != None for i in hand)
         
 async def setup(bot):
   await bot.add_cog(rockPaperScissors(bot))
+  
 
