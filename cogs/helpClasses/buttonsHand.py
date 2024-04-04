@@ -22,7 +22,7 @@ class HandView(discord.ui.View):
                 self.stop()
         else:
             await interaction.response.send_message(content=f"You are not participating in this duel!", ephemeral=True)
-        await interaction.response.defer()
+        await interaction.response.defer() if not interaction.response.is_done() else None
 
     @discord.ui.button(label='Rock', style=discord.ButtonStyle.blurple, emoji='🗿')
     async def rockButton(self, interaction: discord.Interaction, button: discord.ui.Button):

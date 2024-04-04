@@ -22,7 +22,7 @@ class DuelView(discord.ui.View):
       self.stop()
     else:
       await interaction.response.send_message('You are not the challenged user!', ephemeral=True)
-    await interaction.response.defer()
+    await interaction.response.defer() if not interaction.response.is_done() else None
 
   #buttons for accpeting/declining duel
   @discord.ui.button(label='Accept Duel', style=discord.ButtonStyle.green)
