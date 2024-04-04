@@ -2,7 +2,7 @@ import discord
 
 #duel class
 class DuelView(discord.ui.View):
-  def __init__(self,bot,challengingUser,challengedUser):
+  def __init__(self,challengingUser,challengedUser,bot):
       super().__init__()
       self.bot = bot
       self.value = None
@@ -34,5 +34,6 @@ class DuelView(discord.ui.View):
     await self.handleButton(interaction, button, 'Duel Rejected', False)
 
   #return pressed button 
-  def getButtonPressed(self):
+  async def getButtonPressed(self):
+    await self.wait()
     return self.buttonPressed

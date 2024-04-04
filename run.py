@@ -10,9 +10,6 @@ from utils.keepAlive import keepAlive
 load_dotenv()
 myToken = os.getenv('TOKEN')
 
-intents = discord.Intents.default()
-intents.members = True
-
 bot = gameBot()
 
 keepAlive()

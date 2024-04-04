@@ -1,35 +1,51 @@
+from typing import Dict, List
 import discord
+from discord import embeds
+from utils.writeDictionary import writeDictionary
 
 #class for embeded messages
 class Embed:
-  def __init__(self,challengedUser,challengingUser):
-    self.challengedUser = challengedUser
-    self.challengingUser = challengingUser
+  def startLobby(self,gameName: str,players: List):
+     embed = discord.Embed(title=f"Creating lobby for {gameName}", description = f"Current players in lobby\n {chr(10).join(players)}",color=0x000000)
+     return embed
 
 
+  def closingLobby(self,gameName: str,players: List):
+    embed = discord.Embed(
+      title=f"Lobby was created for {gameName}",
+      description = f"Current players in lobby\n {chr(10).join(players)}\n The game is starting...",
+      color=0x000000)
+    return embed
+
+  def choseHands(self,playersChoices: Dict):
+    embed = discord.Embed(
+      title="Chose your Hand", 
+      description = f"{writeDictionary(playersChoices)}",
+      color=0x000000)
+    return embed
+
+                      
   #creates embed for challenge
-  def challengeDuel(self):
-    embed = discord.Embed(title="Upcoming Duel ", description=f"{self.challengingUser.mention} challenged {self.challengedUser.mention} in Rock, Paper, Scissors", color=0x000000)
-    embed.set_thumbnail(url = self.challengedUser.display_avatar.url)
+  def challengeDuel(self,challengingUser,challengedUser):
+    embed = discord.Embed(
+      title="Upcoming Duel ", 
+      description=f"{challengingUser.mention} challenged {challengedUser.mention} in Rock, Paper, Scissors",
+      color=0x000000)
+    embed.set_thumbnail(url = challengedUser.display_avatar.url)
     return embed
 
   #creates embed for duel outcome
-  def returnDuel(self,outcome):
+  def returnDuel(self,challengingUser,challengedUser,outcome):
     messageDecider = {
-      "tie": f"The duel has ended as a tie between {self.challengingUser.mention} and {self.challengedUser.mention}",
-      "win": f"{self.challengingUser.mention} has won the duel against {self.challengedUser.mention}",
-      "lose": f"{self.challengedUser.mention} has won the duel against {self.challengingUser.mention}"
+      "tie": f"The duel has ended as a tie between {challengingUser.mention} and {challengedUser.mention}",
+      "win": f"{challengingUser.mention} has won the duel against {challengedUser.mention}",
+      "lose": f"{challengedUser.mention} has won the duel against {challengingUser.mention}"
     }
-    embed = discord.Embed(title="Duel Ended", description= 
-                          f"{messageDecider[outcome[0]]}\n{self.challengingUser.mention} chose {outcome[1]}\n{self.challengedUser.mention} chose {outcome[2]}"
-                          ,color=0x000000)
+    embed = discord.Embed(
+      title="Duel Ended", 
+      description=f"{messageDecider[outcome[0]]}\n{writeDictionary(outcome[1])}",
+      color=0x000000)
     return embed
 
-  #defines loser of duel //unused
-  def loser(self,outcome):
-    loser = {
-      "tie": None,
-      "win":self.challengedUser,
-      "lose":self.challengingUser
-    }
-    return loser[outcome[0]]
+
+  
