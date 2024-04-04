@@ -34,5 +34,6 @@ class DuelView(discord.ui.View):
     await self.handleButton(interaction, button, 'Duel Rejected', False)
 
   #return pressed button 
-  def getButtonPressed(self):
+  async def getButtonPressed(self):
+    await self.wait()
     return self.buttonPressed

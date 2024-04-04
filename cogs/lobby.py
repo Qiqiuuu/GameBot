@@ -23,7 +23,7 @@ async def creatingLobby(self, interaction: discord.Interaction):
 async def handleButton(self, interaction: discord.Interaction, button: discord.ui.Button):
   if interaction.user.id not in self.playersList:
       self.addPlayer(interaction.user.id)
-      await self.embedMessage.edit_original_response(embed=self.getEmbed())
+      await self.embedMessage.edit(embed=self.getEmbed())
 
 def addPlayer(self, player):
   self.playersList.append(player)

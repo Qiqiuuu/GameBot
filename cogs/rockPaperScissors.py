@@ -2,34 +2,59 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 from cogs.helpClasses.buttonsDuel import DuelView
-from cogs.helpClasses.duelDm import DuelDm
 from cogs.helpClasses.embed import Embed
+from cogs.helpClasses.buttonsHand import HandView
 
 #main class for rps game
 class rockPaperScissors(commands.Cog):
-    def __init__(self, bot):
+  def __init__(self, bot):
         self.bot = bot
     
-    @app_commands.command(name='rps', description='Play Rock Paper Scissors with me!')
-    async def rps(self, interaction: discord.Interaction, challengeduser: discord.Member):
+  @app_commands.command(name='rps', description='Play Rock Paper Scissors with me!')
+  async def rps(self, interaction: discord.Interaction, challengeduser: discord.Member):
+    
+    self.challengedUser = challengeduser
+    self.challengingUser = interaction.user
 
-      if challengeduser.id == interaction.user.id:
-        await interaction.response.send_message("You cannot challenge yourself!")
-        return
+    if self.challengedUser.id ==  self.challengingUser.id:
+      await interaction.response.send_message("You cannot challenge yourself!")
+      return
   
-      embed = Embed()
-      view = DuelView(interaction.user,challengeduser,self.bot)
-      duelInstance = DuelDm(interaction.user,challengeduser,self.bot)
+    embed = Embed()
+    view = DuelView(interaction.user,challengeduser,self.bot)
+    duelInstance = HandView(interaction.user,challengeduser,self.bot)
 
-      await interaction.response.send_message(embed=embed.challengeDuel(interaction.user,challengeduser),view=view)
+    await interaction.response.send_message(embed=embed.challengeDuel( self.challengingUser,self.challengedUser),view=view)
+    await view.wait()
+    if(view.buttonPressed):
+      await interaction.edit_original_response(embed = embed.choseHands(duelInstance.choices()),view = duelInstance)
+      choices = await duelInstance.getHands()
+      outcome = self.deciceDuel(choices)
+      await interaction.edit_original_response(embed=embed.returnDuel(self.challengingUser,self.challengedUser, outcome),view=None)
+    else:
+      await interaction.followup.send(f"{challengeduser.mention} declined the duel")
+      await interaction.response.defer()
 
-      await view.wait()
-      if(view.buttonPressed):
-        outcome = await duelInstance.duelDecider()
-        await interaction.followup.send(embed=embed.returnDuel(interaction.user,challengeduser, outcome))
-      else:
-        await interaction.followup.send(f"{challengeduser.mention} declined the duel")
-        await interaction.response.defer()
+
+  def deciceDuel(self,choice: dict):
+    beats = {
+      '🗿': '✂️',
+      '✂️': '📄',
+      '📄': '🗿',
+    }
+    hand = list(choice.values())
+    print(hand)
+    if hand[0].name == hand[1].name:
+      outcome = "tie"
+    elif hand[0].name == beats[hand[1].name]:
+      outcome = "lose"
+    else:
+      outcome = "win"
+
+    ret = {self.challengingUser: hand[0].name,self.challengedUser: hand[1].name}
+
+    return [outcome,ret]
         
 async def setup(bot):
   await bot.add_cog(rockPaperScissors(bot))
+
