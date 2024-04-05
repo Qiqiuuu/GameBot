@@ -1,8 +1,7 @@
 import discord
-import time
-from discord.ext import tasks
 from GameBot.cogs.helpClasses.embed import Embed
 from GameBot.utils.interactionUserMember import interactionUserMember
+from GameBot.utils.interactionRespond import interactionRespond
 
 
 class Lobby(discord.ui.View):
@@ -31,8 +30,8 @@ class Lobby(discord.ui.View):
         else:
             await interaction.response.send_message(content=f"You already joind lobby!",
                                                     ephemeral=True)
-        await self.interaction.response.defer() if not self.interaction.response.is_done() else None
-        await interaction.response.defer() if not interaction.response.is_done() else None
+        await interactionRespond(self.interaction)
+        await interactionRespond(interaction)
 
     @discord.ui.button(label="Close Lobby",style=discord.ButtonStyle.red)
     async def closeButton(self,interaction: discord.Interaction, button: discord.ui.Button):
@@ -43,8 +42,8 @@ class Lobby(discord.ui.View):
         else:
             await interaction.response.send_message(content=f"You can't close lobby!",
                                                     ephemeral=True)
-        await self.interaction.response.defer() if not self.interaction.response.is_done() else None
-        await interaction.response.defer() if not interaction.response.is_done() else None
+        await interactionRespond(self.interaction)
+        await interactionRespond(interaction)
 
     def addPlayer(self, player):
         self.playersList.append(player)

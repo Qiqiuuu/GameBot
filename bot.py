@@ -8,7 +8,7 @@ class gameBot(commands.Bot):
     super().__init__(command_prefix='!', intents = discord.Intents.all())
   
   async def on_ready(self):
-    print(f'{self} has connected to Discord!')
+    print(f'{self.user} has connected to Discord!')
     await self.load_extension('cogs.rockPaperScissors')
     await self.load_extension('cogs.russianRoulette')
     synced = await self.tree.sync()
