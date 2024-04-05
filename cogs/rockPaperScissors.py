@@ -4,7 +4,7 @@ from discord.ext import commands
 from GameBot.cogs.helpClasses.buttonsDuel import DuelView
 from GameBot.cogs.helpClasses.buttonsHand import HandView
 from GameBot.cogs.helpClasses.embed import Embed
-
+from GameBot.utils.interactionRespond import interactionRespond
 
 #main class for rps game
 class rockPaperScissors(commands.Cog):
@@ -37,7 +37,7 @@ class rockPaperScissors(commands.Cog):
         await interaction.edit_original_response(embed=embed.duelTerminated(),view=None)
     else:
       await interaction.edit_original_response(embed=embed.duelDeclined(self.challengedUser),view=None)
-    await interaction.response.defer() if not interaction.response.is_done() else None
+    await interactionRespond(interaction)
 
 
   def deciceDuel(self,choice: dict):

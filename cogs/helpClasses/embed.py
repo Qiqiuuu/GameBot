@@ -1,66 +1,62 @@
 from typing import Dict, List
 import discord
-from GameBot.utils.writeDictionary import writeDictionary
 from GameBot.utils.writePlayersInLobby import writePlayersInLobby
 
-#class for embeded messages
+
+# class for embeded messages
 class Embed:
-  def startLobby(self,gameName: str,players: List):
-     embed = discord.Embed(title=f"Creating lobby for {gameName}", description = f"Current players in lobby:\n {writePlayersInLobby(players)}",color=0x000000)
-     return embed
+    def embedTemplate(self, title: str, description: str, color: int = 0x000000, thumbnail_url: str = None):
+        embed = discord.Embed(title=title, description=description, color=color)
+        if thumbnail_url:
+            embed.set_thumbnail(url=thumbnail_url)
+        return embed
 
+    def rouletteStart(self, players: dict):
+        description = f"Are you ready to welcome Death? 💀\n{writePlayersInLobby(players)}"
+        return self.embedTemplate(title=f"Russian Roulette", description=description)
 
-  def closingLobby(self,gameName: str,players: List):
-    embed = discord.Embed(
-      title=f"Lobby was created for {gameName}",
-      description = f"Current players in lobby:\n {writePlayersInLobby(players)}The game is starting...",
-      color=0x000000)
-    return embed
+    def rouletteDied(self, deadPlayer: discord.Member, players: dict):
+        description = f"{deadPlayer.mention} died! ☠️\n {writePlayersInLobby(players)}"
+        return self.embedTemplate(title=f"Russian Roulette", description=description)
 
-  def choseHands(self,playersChoices: Dict):
-    embed = discord.Embed(
-      title="Chose your Hand", 
-      description = f"{writeDictionary(playersChoices)}",
-      color=0x000000)
-    return embed
+    def rouletteSurvived(self, players: dict):
+        description = f"No one died this time! 🍻\n{writePlayersInLobby(players)}"
+        return self.embedTemplate(title=f"Russian Roulette", description=description)
 
-  def duelDeclined(self,challengedUser):
-    embed = discord.Embed(
-      title="Duel Declined",
-      description = f"{challengedUser.mention} chickened out!",
-      color=0x000000
-    )
-    return embed
+    def rouletteEnd(self, winner: discord.Member):
+        description = f"{winner.mention} won! 👏"
+        return self.embedTemplate(title=f"Russian Roulette", description=description)
 
-  def duelTerminated(self):
-    embed = discord.Embed(
-      title="Duel Terminated",
-      description = "Duel was terminated due to a lack of response",
-      color=0x000000
-    )
-    return embed
-                      
-  #creates embed for challenge
-  def challengeDuel(self,challengingUser,challengedUser):
-    embed = discord.Embed(
-      title="Upcoming Duel ", 
-      description=f"{challengingUser.mention} challenged {challengedUser.mention} in Rock, Paper, Scissors",
-      color=0x000000)
-    embed.set_thumbnail(url = challengedUser.display_avatar.url)
-    return embed
+    def startLobby(self, gameName: str, players: list):
+        description = f"Current players in lobby: \n{writePlayersInLobby(players)}"
+        return self.embedTemplate(title=f"Creating lobby for {gameName}", description=description)
 
-  #creates embed for duel outcome
-  def returnDuel(self,challengingUser,challengedUser,outcome):
-    messageDecider = {
-      "tie": f"The duel has ended as a tie between {challengingUser.mention} and {challengedUser.mention}",
-      "win": f"{challengingUser.mention} has won the duel against {challengedUser.mention}",
-      "lose": f"{challengedUser.mention} has won the duel against {challengingUser.mention}"
-    }
-    embed = discord.Embed(
-      title="Duel Ended", 
-      description=f"{messageDecider[outcome[0]]}\n{writeDictionary(outcome[1])}",
-      color=0x000000)
-    return embed
+    def closingLobby(self, gameName: str, players: list):
+        description = f"Current players in lobby: \n{writePlayersInLobby(players)}The game is starting ..."
+        return self.embedTemplate(title=f"Lobby was created for {gameName}", description=description)
 
+    def choseHands(self, playersChoices: dict):
+        description = f"{writePlayersInLobby(playersChoices)}"
+        return self.embedTemplate(title="Chose your Hand", description=description)
 
-  
+    def duelDeclined(self, challengedUser):
+        description = f"{challengedUser.mention} chickened out!"
+        return self.embedTemplate(title="Duel Declined", description=description)
+
+    def duelTerminated(self):
+        description = "Duel was terminated due to a lack of response"
+        return self.embedTemplate(title="Duel Terminated", description=description)
+
+    def challengeDuel(self, challengingUser, challengedUser):
+        description = f"{challengingUser.mention} challenged {challengedUser.mention} in Rock, Paper, Scissors"
+        return self.embedTemplate(title="Upcoming Duel", description=description,
+                                  thumbnail_url=challengedUser.display_avatar.url)
+
+    def returnDuel(self, challengingUser, challengedUser, outcome):
+        messageDecider = {
+            "tie": f"{challengingUser.mention} tied with {challengedUser.mention} !",
+            "win": f"{challengingUser.mention} defeated {challengedUser.mention} !",
+            "lose": f"{challengedUser.mention} defeated {challengingUser.mention} !"
+        }
+        description = f"{messageDecider[outcome[0]]}\n{writePlayersInLobby(outcome[1])}"
+        return self.embedTemplate(title="Duel Ended", description=description)

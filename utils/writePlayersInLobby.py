@@ -1,5 +1,12 @@
-def writePlayersInLobby(list: list):
+from typing import List, Dict, Union
+
+
+def writePlayersInLobby(players: Union[List, Dict]):
     str = ""
-    for i in list:
-        str+=i.mention+"\n"
+    if isinstance(players, list):
+        for i in players:
+            str += i.mention + "\n"
+    elif isinstance(players, dict):
+        for key, val in players.items():
+            str += val + " " + key.mention + "\n"
     return str
