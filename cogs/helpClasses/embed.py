@@ -1,20 +1,19 @@
-import re
 from typing import Dict, List
 import discord
-from discord import embeds
-from utils.writeDictionary import writeDictionary
+from GameBot.utils.writeDictionary import writeDictionary
+from GameBot.utils.writePlayersInLobby import writePlayersInLobby
 
 #class for embeded messages
 class Embed:
   def startLobby(self,gameName: str,players: List):
-     embed = discord.Embed(title=f"Creating lobby for {gameName}", description = f"Current players in lobby\n {chr(10).join(players)}",color=0x000000)
+     embed = discord.Embed(title=f"Creating lobby for {gameName}", description = f"Current players in lobby:\n {writePlayersInLobby(players)}",color=0x000000)
      return embed
 
 
   def closingLobby(self,gameName: str,players: List):
     embed = discord.Embed(
       title=f"Lobby was created for {gameName}",
-      description = f"Current players in lobby\n {chr(10).join(players)}\n The game is starting...",
+      description = f"Current players in lobby:\n {writePlayersInLobby(players)}The game is starting...",
       color=0x000000)
     return embed
 

@@ -1,5 +1,4 @@
 import discord
-
 #duel class
 class DuelView(discord.ui.View):
   def __init__(self,challengingUser,challengedUser,bot):

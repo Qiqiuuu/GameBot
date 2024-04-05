@@ -1,7 +1,7 @@
 import discord
-
 from typing import Optional
-from cogs.helpClasses.embed import Embed
+from GameBot.cogs.helpClasses.embed import Embed
+from GameBot.utils.interactionUserMember import interactionUserMember
 
 class HandView(discord.ui.View):
     def __init__(self, challengingUser, challengedUser, bot):
@@ -11,7 +11,7 @@ class HandView(discord.ui.View):
         self.playerChoices = {challengingUser: '❌', challengedUser: '❌'}
 
     async def button(self, hand: str, interaction: discord.Interaction, button: discord.ui.Button):
-        interactionUser = interaction.user if interaction.guild is None else interaction.guild.get_member(interaction.user.id)
+        interactionUser = interactionUserMember(interaction)
         embed = Embed()
         if interaction.user.id in self.chosenHands:
             await interaction.response.defer()
