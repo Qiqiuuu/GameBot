@@ -15,9 +15,20 @@ class gameBot(commands.Bot):
         await self.load_extension('cogs.rockPaperScissors')
         await self.load_extension('cogs.russianRoulette')
         synced = await self.tree.sync()
-        self.dataBase = DataBase()
-
         print(f'Synced {len(synced)} commands.')
+        self.dataBase = DataBase()
+        self.fetchDataToDataBase()
+        print(f"Fetched data")
 
     def getdataBase(self):
         return self.dataBase
+
+    def fetchDataToDataBase(self):
+        print(f"Fetching Guilds")
+        for guild in self.guilds:
+            self.dataBase.checkGuild(guild)
+            print(f"Fetching members from guild: {guild.name}")
+            for member in guild.members:
+                if not member.bot:
+                    self.dataBase.checkMember(member)
+            print(f"Fetched members from guild: {guild.name}")

@@ -40,40 +40,38 @@ class DataBase:
             print(f"Created new guild: {guild.name} - {datetime.datetime.now()}")
 
     def checkMember(self, member: discord.Member):
-        if not self.guilds.find_one({"_id": member.guild.id}):
-            self.checkGuild(member.guild)
         guildData = self.guilds.find_one({"_id": member.guild.id})
-        if member.name not in guildData['members']:
+        if not guildData:
+            self.checkGuild(member.guild)
+        if str(member.id) not in guildData['members']:
             self.guilds.update_one(
                 {"_id": member.guild.id},
                 {"$set": {
-                    "members." + str(member.name): {
+                    "members." + str(member.id): {
                         "id": member.id,
+                        "name": member.name,
                         "money": 200,
                         "timeSpentOnVC": 0
                     }
                 }}
-
             )
-            print(f"Added new member: {member.name} to guild: {member.guild.name}  - {datetime.datetime.now()}")
+            print(f"Added new member: {member.name} to guild: {member.guild.name} - {datetime.datetime.now()}")
 
     def addMoney(self, member: discord.Member, amount: int):
-        if not self.guilds.find_one({"_id": member.guild.id}):
-            self.checkMember(member)
+        self.checkMember(member)
         self.guilds.update_one(
-            {"_id": member.guild.id, "members." + str(member.name): {"$exists": True}},
-            {"$inc": {"members." + str(member.name) + ".money": amount}}
+            {"_id": member.guild.id, "members." + str(member.id): {"$exists": True}},
+            {"$inc": {"members." + str(member.id) + ".money": amount}}
         )
         print(f"Added money to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
 
     def takeMoney(self, member: discord.Member, amount: int):
-        if not self.guilds.find_one({"_id": member.guild.id}):
-            self.checkMember(member)
+        self.checkMember(member)
         guildData = self.guilds.find_one({"_id": member.guild.id})
         if guildData['members'][str(member.name)]['money'] >= amount:
             self.guilds.update_one(
                 {"_id": member.guild.id},
-                {"$inc": {"members." + str(member.name) + ".money": -amount}}
+                {"$inc": {"members." + str(member.id) + ".money": -amount}}
             )
             print(f"Took money from member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
             return True
@@ -81,17 +79,17 @@ class DataBase:
             return False
 
     def addTime(self, member: discord.Member, amount: int):
-        if not self.guilds.find_one({"_id": member.guild.id}):
-            self.checkMember(member)
+        self.checkMember(member)
         self.guilds.update_one(
-            {"_id": member.guild.id, "members." + str(member.name): {"$exists": True}},
-            {"$inc": {"members." + str(member.name) + ".timeSpentOnVC": amount}}
+            {"_id": member.guild.id, "members." + str(member.id): {"$exists": True}},
+            {"$inc": {"members." + str(member.id) + ".timeSpentOnVC": amount}}
         )
         print(f"Added time to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
 
     def getMember(self, member: discord.Member):
+        self.checkMember(member)
         guildData = self.guilds.find_one({"_id": member.guild.id})
-        if guildData is not None and member.name in guildData['members']:
-            return guildData['members'][str(member.name)]
-        else:
-            return False
+        return guildData['members'][str(member.id)]
+
+
+
