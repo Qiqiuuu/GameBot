@@ -5,18 +5,18 @@ from GameBot.utils.interactionUserMember import interactionUserMember
 from GameBot.utils.interactionRespond import interactionRespond
 
 class HandView(discord.ui.View):
-    def __init__(self, challengingUser, challengedUser, bot):
+    def __init__(self, challengingUser: discord.Member, challengedUser: discord.Member, bot):
         super().__init__()
         self.bot = bot
-        self.chosenHands:dict[int, Optional[discord.PartialEmoji]] = {challengingUser.id: None, challengedUser.id: None,}
+        self.chosenHands:dict[discord.Member, Optional[discord.PartialEmoji]] = {challengingUser: None, challengedUser: None,}
         self.playerChoices = {challengingUser: '❌', challengedUser: '❌'}
 
     async def button(self,interaction: discord.Interaction, button: discord.ui.Button):
         interactionUser = interactionUserMember(interaction)
         embed = Embed()
-        if interaction.user.id in self.chosenHands:
+        if interactionUser in self.chosenHands:
             await interaction.response.defer()
-            self.chosenHands[interaction.user.id] = button.emoji
+            self.chosenHands[interactionUser] = button.emoji
             self.playerChoices[interactionUser] = '✅'
             await interaction.edit_original_response(embed = embed.choseHands(self.choices()))
             if all(hand is not None for hand in self.chosenHands.values()):

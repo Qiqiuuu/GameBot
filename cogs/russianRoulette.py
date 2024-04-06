@@ -31,7 +31,7 @@ class RussianRoulette(commands.Cog):
 
         await self.interaction.edit_original_response(embed=self.embed.rouletteStart(self.playerStatus),
                                                       view=rouletteView)
-        winner = await rouletteView.returnWinner()
+        winner, losers = await rouletteView.returnResults()
         await self.interaction.edit_original_response(embed=self.embed.rouletteEnd(winner),
                                                       view=None)
 

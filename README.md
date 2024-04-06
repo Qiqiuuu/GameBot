@@ -1,3 +1,5 @@
+# Outdated -  in progress
+
 # GameBot for Discord
 GameBot with some games to play in discord
 ## Files

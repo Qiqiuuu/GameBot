@@ -52,11 +52,7 @@ class Embed:
         return self.embedTemplate(title="Upcoming Duel", description=description,
                                   thumbnail_url=challengedUser.display_avatar.url)
 
-    def returnDuel(self, challengingUser, challengedUser, outcome):
-        messageDecider = {
-            "tie": f"{challengingUser.mention} tied with {challengedUser.mention} !",
-            "win": f"{challengingUser.mention} defeated {challengedUser.mention} !",
-            "lose": f"{challengedUser.mention} defeated {challengingUser.mention} !"
-        }
-        description = f"{messageDecider[outcome[0]]}\n{writePlayersInLobby(outcome[1])}"
+    def returnDuel(self, outcome, choices):
+        description = f"{outcome[1].mention} tied with {outcome[2].mention}!" if outcome[0] else f"{outcome[1].mention} defeated {outcome[2].mention}!"
+        description += f"\n{writePlayersInLobby(choices)}"
         return self.embedTemplate(title="Duel Ended", description=description)
