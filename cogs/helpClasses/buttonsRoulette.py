@@ -28,13 +28,13 @@ class ButtonsRoulette(discord.ui.View):
                         embed=self.embed.rouletteDied(deadPlayer, self.russianRoulette.getPlayerStatus()))
                 else:
                     await self.interaction.edit_original_response(
-                        embed=self.embed.rouletteSurvived(alivePlayers))
+                        embed=self.embed.rouletteSurvived(self.russianRoulette.getPlayerStatus()))
         else:
             await interaction.response.send_message(content=f"You are not playing!",
                                                     ephemeral=True)
         await interactionRespond(interaction)
         await interactionRespond(self.interaction)
 
-    async def returnWinner(self):
+    async def returnResults(self):
         await self.wait()
-        return self.winner
+        return [self.winner,self.playerList.remove(self.winner)]
