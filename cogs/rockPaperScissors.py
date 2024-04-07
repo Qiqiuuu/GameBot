@@ -1,15 +1,15 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from GameBot.cogs.helpClasses.buttonsDuel import DuelView
-from GameBot.cogs.helpClasses.buttonsHand import HandView
-from GameBot.cogs.helpClasses.embed import Embed
-from GameBot.utils.interactionRespond import interactionRespond
-from GameBot.utils.interactionUserMember import interactionUserMember
+from cogs.helpClasses.buttonsDuel import DuelView
+from cogs.helpClasses.buttonsHand import HandView
+from cogs.helpClasses.embed import Embed
+from utils.interactionRespond import interactionRespond
+from utils.interactionUserMember import interactionUserMember
 
 
 # main class for rps game
-class rockPaperScissors(commands.Cog):
+class RockPaperScissors(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
@@ -65,4 +65,4 @@ class rockPaperScissors(commands.Cog):
 
 
 async def setup(bot):
-    await bot.add_cog(rockPaperScissors(bot))
+    await bot.add_cog(RockPaperScissors(bot))
