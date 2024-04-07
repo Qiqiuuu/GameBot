@@ -17,8 +17,8 @@ class DataBase(commands.Cog):
         self.myPassword = os.getenv('PASSWD')
         self.myLogin = os.getenv('LOGIN')
         self.loginToMongo()
-        self.db = self.client['GameBot']  # Use your database name here
-        self.guilds = self.db['guilds']  # Use your collection name here
+        self.db = self.client['GameBot']
+        self.guilds = self.db['guilds']
 
     def loginToMongo(self):
         escaped_username = urllib.parse.quote_plus(self.myLogin)
@@ -57,7 +57,7 @@ class DataBase(commands.Cog):
                     "members." + str(member.id): {
                         "id": member.id,
                         "name": member.name,
-                        "money": 200,
+                        "coins": 200,
                         "timeSpentOnVC": 0,
                         "games": {}
                     }
@@ -69,21 +69,21 @@ class DataBase(commands.Cog):
         self.checkMember(member)
         self.guilds.update_one(
             {"_id": member.guild.id, f"members.{str(member.id)}": {"$exists": True}},
-            {"$inc": {f"members.{str(member.id)}.money": amount}}
+            {"$inc": {f"members.{str(member.id)}.coins": amount}}
         )
         print(
-            f"Added money to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
+            f"Added coins to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
 
     def takeMoney(self, member: discord.Member, amount: int):
         self.checkMember(member)
         guildData = self.guilds.find_one({"_id": member.guild.id})
-        if guildData['members'][str(member.name)]['money'] >= amount:
+        if guildData['members'][str(member.id)]['coins'] >= amount:
             self.guilds.update_one(
                 {"_id": member.guild.id},
-                {"$inc": {f"members.{str(member.id)}.money": -amount}}
+                {"$inc": {f"members.{str(member.id)}.coins": -amount}}
             )
             print(
-                f"Took money from member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
+                f"Took coins from member: {member.name} in guild: {member.guild.name}, amount: -{amount} - {datetime.datetime.now()}")
             return True
         else:
             return False
@@ -132,7 +132,7 @@ class DataBase(commands.Cog):
             )
             self.guilds.update_one(
                 {"_id": member.guild.id, f"members.{str(member.id)}.games.{str(gameID)}": {"$exists": True}},
-                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.Balance": -amount}}
+                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.Profit": -amount}}
             )
             print(
                 f"Updated game stats for member: {member.name} in guild: {member.guild.name}, gameID: {gameID}, amount: {-amount} - {datetime.datetime.now()}")
@@ -149,11 +149,15 @@ class DataBase(commands.Cog):
             )
             self.guilds.update_one(
                 {"_id": member.guild.id, f"members.{str(member.id)}.games.{str(gameID)}": {"$exists": True}},
-                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.Balance": amount}}
+                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.Profit": amount}}
             )
             print(
                 f"Updated game stats for member: {member.name} in guild: {member.guild.name}, gameID: {gameID}, amount: {amount} - {datetime.datetime.now()}")
 
+    def getCoins(self, member: discord.Member):
+        guildData = self.guilds.find_one({"_id": member.guild.id})
+        if str(member.id) in guildData['members']:
+            return guildData['members'][str(member.id)]['coins']
 
 async def setup(bot):
     await bot.add_cog(DataBase(bot))

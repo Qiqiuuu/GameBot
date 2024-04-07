@@ -5,11 +5,15 @@ from utils.writePlayersInLobby import writePlayersInLobby
 
 # class for embeded messages
 class Embed:
-    def embedTemplate(self, title: str, description: str, color: int = 0x000000, thumbnail_url: str = None):
+    def embedTemplate(self, title: str, description: str, color: int = 0x000000, thumbnail_url: str = None,
+                      footer: str = None):
         embed = discord.Embed(title=title, description=description, color=color)
         if thumbnail_url:
             embed.set_thumbnail(url=thumbnail_url)
         return embed
+
+    def isFree(self, bet: int):
+        return f'{bet} :coin:' if bet > 0 else 'Free'
 
     def rouletteStart(self, players: dict):
         description = f"Are you ready to welcome Death? 💀\n{writePlayersInLobby(players)}"
@@ -23,17 +27,23 @@ class Embed:
         description = f"No one died this time! 🍻\n{writePlayersInLobby(players)}"
         return self.embedTemplate(title=f"Russian Roulette", description=description)
 
-    def rouletteEnd(self, winner: discord.Member):
-        description = f"{winner.mention} won! 👏"
+    def rouletteEnd(self, winner: discord.Member, wholeBet: int):
+        description = f"{winner.mention} won{' '+str(wholeBet)+' :coin:' if wholeBet > 0 else ''}! 👏"
         return self.embedTemplate(title=f"Russian Roulette", description=description)
 
-    def startLobby(self, gameName: str, players: list):
-        description = f"Current players in lobby: \n{writePlayersInLobby(players)}"
+    def startLobby(self, gameName: str, players: list, bet: int):
+        description = ""
+        description += f"Lobby's entry fee: {self.isFree(bet)} \n"
+        description += f"Current players in lobby: \n{writePlayersInLobby(players)}"
         return self.embedTemplate(title=f"Creating lobby for {gameName}", description=description)
 
     def closingLobby(self, gameName: str, players: list):
         description = f"Current players in lobby: \n{writePlayersInLobby(players)}The game is starting ..."
         return self.embedTemplate(title=f"Lobby was created for {gameName}", description=description)
+
+    def cancelLobby(self, gameName: str):
+        description = f"Lobby for {gameName} was canceled!"
+        return self.embedTemplate(title="Lobby Canceled!", description=description)
 
     def choseHands(self, playersChoices: dict):
         description = f"{writePlayersInLobby(playersChoices)}"
@@ -60,7 +70,7 @@ class Embed:
 
     def profile(self, memberData: dict, guild: discord.Guild):
         member = guild.get_member(memberData['id'])
-        description = f"Money: {memberData['money']}\n Voice Channels Time: {memberData['timeSpentOnVC']} min\n"
+        description = f":coin: Coins: {memberData['coins']}\n:timer: Voice Channels Time: {memberData['timeSpentOnVC']} min\n"
         for game in memberData['games']:
             stats = memberData['games'][game]
             description += f"{stats['gameName']}:\n 　　W: {stats['W']} 　L: {stats['L']} 　Game Profit: {stats['Profit']}\n"

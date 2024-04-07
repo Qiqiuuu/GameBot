@@ -5,10 +5,11 @@ from cogs.helpClasses.embed import Embed
 
 
 class ButtonsRoulette(discord.ui.View):
-    def __init__(self, interaction, playerList, russianRoulette):
+    def __init__(self, interaction, playerList, russianRoulette, bet):
         super().__init__()
         self.russianRoulette = russianRoulette
         self.winner = None
+        self.bet = bet
         self.interaction = interaction
         self.playerList = playerList
         self.embed = Embed()
@@ -37,4 +38,5 @@ class ButtonsRoulette(discord.ui.View):
 
     async def returnResults(self):
         await self.wait()
-        return [self.winner,self.playerList.remove(self.winner)]
+        losers = [player for player in self.playerList if player != self.winner]
+        return [self.winner, losers]

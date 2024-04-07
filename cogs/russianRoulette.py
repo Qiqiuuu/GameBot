@@ -7,6 +7,7 @@ from discord.ext import commands
 from cogs.helpClasses.lobby import Lobby
 from cogs.helpClasses.embed import Embed
 from cogs.helpClasses.buttonsRoulette import ButtonsRoulette
+from bot import GameBot
 
 
 class RussianRoulette(commands.Cog):
@@ -17,23 +18,28 @@ class RussianRoulette(commands.Cog):
         self.embed = Embed()
         self.emoji = ['😀', '😏', '😎', '😜', '😱', '🤡', '🤠', '🎃']
         self.playerStatus = None
+        self.result = None
 
     @app_commands.command(name='russianroulette', description='Let roulette spin!')
-    async def russianRoulette(self, interaction: discord.Interaction):
-        lobby = Lobby(self.bot, "Russian Roulette")
+    async def russianRoulette(self, interaction: discord.Interaction, bet: int = 0):
+        lobby = Lobby(self.bot, "Russian Roulette", bet)
         await lobby.creatingLobby(interaction)
-        self.playerList, self.interaction, = await lobby.returnList()
+        self.playerList, self.interaction, self.result = await lobby.returnList()
 
         await asyncio.sleep(2)
+        if self.result:
+            rouletteView = ButtonsRoulette(interaction, self.playerList, self, bet)
+            self.playerStatus = self.assignStatus()
 
-        rouletteView = ButtonsRoulette(interaction, self.playerList, self)
-        self.playerStatus = self.assignStatus()
+            await self.interaction.edit_original_response(embed=self.embed.rouletteStart(self.playerStatus),
+                                                          view=rouletteView)
+            winner, losers = await rouletteView.returnResults()
+            self.bot.getdataBase().addWin(winner, 1225538557171470348, bet * len(losers))
+            for member in losers:
+                self.bot.getdataBase().addLose(member, 1225538557171470348, bet)
 
-        await self.interaction.edit_original_response(embed=self.embed.rouletteStart(self.playerStatus),
-                                                      view=rouletteView)
-        winner, losers = await rouletteView.returnResults()
-        await self.interaction.edit_original_response(embed=self.embed.rouletteEnd(winner),
-                                                      view=None)
+            await self.interaction.edit_original_response(embed=self.embed.rouletteEnd(winner, (bet * len(losers))),
+                                                          view=None)
 
     def assignStatus(self):
         status = {}
