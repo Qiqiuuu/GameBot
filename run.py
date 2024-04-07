@@ -1,14 +1,14 @@
 import datetime
 import os
 from dotenv import load_dotenv
-from bot import gameBot
+from bot import GameBot
 
 # bot runner
 
 load_dotenv()
 myToken = os.getenv('TOKEN')
 
-bot = gameBot()
+bot = GameBot()
 
 joinTimes = {}
 
@@ -30,3 +30,4 @@ async def on_voice_state_update(member, before, after):
 
 
 bot.run(str(myToken))
+

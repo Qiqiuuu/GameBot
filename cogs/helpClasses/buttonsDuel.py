@@ -1,5 +1,5 @@
 import discord
-from GameBot.utils.interactionRespond import interactionRespond
+from utils.interactionRespond import interactionRespond
 
 
 # duel class

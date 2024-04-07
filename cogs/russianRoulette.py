@@ -4,9 +4,9 @@ import asyncio
 import discord
 from discord import app_commands
 from discord.ext import commands
-from GameBot.cogs.helpClasses.lobby import Lobby
-from GameBot.cogs.helpClasses.embed import Embed
-from GameBot.cogs.helpClasses.buttonsRoulette import ButtonsRoulette
+from cogs.helpClasses.lobby import Lobby
+from cogs.helpClasses.embed import Embed
+from cogs.helpClasses.buttonsRoulette import ButtonsRoulette
 
 
 class RussianRoulette(commands.Cog):

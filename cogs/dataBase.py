@@ -1,27 +1,28 @@
 import datetime
-
-import pymongo
-from dotenv import load_dotenv
+from discord import app_commands
+from discord.ext import commands
 from pymongo import MongoClient
 import discord
 from dotenv import load_dotenv
 import os
 import urllib.parse
+from cogs.helpClasses.embed import Embed
 
 
-class DataBase:
-    def __init__(self):
+class DataBase(commands.Cog):
+    def __init__(self, bot):
+        self.bot = bot
         self.client = None
         load_dotenv()
         self.myPassword = os.getenv('PASSWD')
+        self.myLogin = os.getenv('LOGIN')
         self.loginToMongo()
         self.db = self.client['GameBot']  # Use your database name here
         self.guilds = self.db['guilds']  # Use your collection name here
 
     def loginToMongo(self):
-        escaped_username = urllib.parse.quote_plus('Qiqiu')
+        escaped_username = urllib.parse.quote_plus(self.myLogin)
         escaped_password = urllib.parse.quote_plus(self.myPassword)
-        # Connect to MongoDB
         self.client = MongoClient(
             f"mongodb+srv://{escaped_username}:{escaped_password}@gamebot.5w0xcvj.mongodb.net/?retryWrites=true&w=majority&appName=GameBot")
         try:
@@ -29,6 +30,12 @@ class DataBase:
             print("Pinged your deployment. You successfully connected to MongoDB!")
         except Exception as e:
             print(e)
+
+    @app_commands.command(name='profile', description="Check member's profile")
+    async def profile(self, interaction: discord.Interaction, membertocheck: discord.Member):
+        memberData = self.getMember(membertocheck)
+        embed = Embed()
+        await interaction.response.send_message(embed=embed.profile(memberData, interaction.guild))
 
     def checkGuild(self, guild: discord.Guild):
         if not self.guilds.find_one({"_id": guild.id}):
@@ -51,7 +58,8 @@ class DataBase:
                         "id": member.id,
                         "name": member.name,
                         "money": 200,
-                        "timeSpentOnVC": 0
+                        "timeSpentOnVC": 0,
+                        "games": {}
                     }
                 }}
             )
@@ -60,10 +68,11 @@ class DataBase:
     def addMoney(self, member: discord.Member, amount: int):
         self.checkMember(member)
         self.guilds.update_one(
-            {"_id": member.guild.id, "members." + str(member.id): {"$exists": True}},
-            {"$inc": {"members." + str(member.id) + ".money": amount}}
+            {"_id": member.guild.id, f"members.{str(member.id)}": {"$exists": True}},
+            {"$inc": {f"members.{str(member.id)}.money": amount}}
         )
-        print(f"Added money to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
+        print(
+            f"Added money to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
 
     def takeMoney(self, member: discord.Member, amount: int):
         self.checkMember(member)
@@ -71,9 +80,10 @@ class DataBase:
         if guildData['members'][str(member.name)]['money'] >= amount:
             self.guilds.update_one(
                 {"_id": member.guild.id},
-                {"$inc": {"members." + str(member.id) + ".money": -amount}}
+                {"$inc": {f"members.{str(member.id)}.money": -amount}}
             )
-            print(f"Took money from member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
+            print(
+                f"Took money from member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
             return True
         else:
             return False
@@ -81,15 +91,69 @@ class DataBase:
     def addTime(self, member: discord.Member, amount: int):
         self.checkMember(member)
         self.guilds.update_one(
-            {"_id": member.guild.id, "members." + str(member.id): {"$exists": True}},
-            {"$inc": {"members." + str(member.id) + ".timeSpentOnVC": amount}}
+            {"_id": member.guild.id, f"members.{str(member.id)}": {"$exists": True}},
+            {"$inc": {f"members.{str(member.id)}.timeSpentOnVC": amount}}
         )
-        print(f"Added time to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
+        print(
+            f"Added time to member: {member.name} in guild: {member.guild.name}, amount: {amount} - {datetime.datetime.now()}")
 
     def getMember(self, member: discord.Member):
         self.checkMember(member)
         guildData = self.guilds.find_one({"_id": member.guild.id})
         return guildData['members'][str(member.id)]
 
+    def addGame(self, guild: discord.Guild, gameID, gameName):
+        self.checkGuild(guild)
+        guildData = self.guilds.find_one({"_id": guild.id})
+        for member in guild.members:
+            if not member.bot:
+                if str(gameID) not in guildData['members'][str(member.id)]['games']:
+                    self.guilds.update_one(
+                        {"_id": member.guild.id, f"members.{str(member.id)}": {"$exists": True}},
+                        {"$set": {f"members.{str(member.id)}.games.{str(gameID)}": {
+                            "gameID": gameID,
+                            "gameName": gameName,
+                            "W": 0,
+                            "L": 0,
+                            "Profit": 0
+                        }}}
+                    )
+                    print(f"Added new game {gameName} to guild {guild.name}")
+
+    def addLose(self, member: discord.Member, gameID, amount: int):
+        self.takeMoney(member, amount)
+        guildData = self.guilds.find_one({"_id": member.guild.id})
+        memberData = guildData['members'][str(member.id)]
+
+        if str(gameID) in memberData["games"]:
+            self.guilds.update_one(
+                {"_id": member.guild.id, f"members.{str(member.id)}.games.{str(gameID)}": {"$exists": True}},
+                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.L": 1}}
+            )
+            self.guilds.update_one(
+                {"_id": member.guild.id, f"members.{str(member.id)}.games.{str(gameID)}": {"$exists": True}},
+                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.Balance": -amount}}
+            )
+            print(
+                f"Updated game stats for member: {member.name} in guild: {member.guild.name}, gameID: {gameID}, amount: {-amount} - {datetime.datetime.now()}")
+
+    def addWin(self, member: discord.Member, gameID, amount: int):
+        self.addMoney(member, amount)
+        guildData = self.guilds.find_one({"_id": member.guild.id})
+        memberData = guildData['members'][str(member.id)]
+
+        if str(gameID) in memberData["games"]:
+            self.guilds.update_one(
+                {"_id": member.guild.id, f"members.{str(member.id)}.games.{str(gameID)}": {"$exists": True}},
+                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.W": 1}}
+            )
+            self.guilds.update_one(
+                {"_id": member.guild.id, f"members.{str(member.id)}.games.{str(gameID)}": {"$exists": True}},
+                {"$inc": {f"members.{str(member.id)}.games.{str(gameID)}.Balance": amount}}
+            )
+            print(
+                f"Updated game stats for member: {member.name} in guild: {member.guild.name}, gameID: {gameID}, amount: {amount} - {datetime.datetime.now()}")
 
 
+async def setup(bot):
+    await bot.add_cog(DataBase(bot))

@@ -1,6 +1,6 @@
 from typing import Dict, List
 import discord
-from GameBot.utils.writePlayersInLobby import writePlayersInLobby
+from utils.writePlayersInLobby import writePlayersInLobby
 
 
 # class for embeded messages
@@ -53,6 +53,18 @@ class Embed:
                                   thumbnail_url=challengedUser.display_avatar.url)
 
     def returnDuel(self, outcome, choices):
-        description = f"{outcome[1].mention} tied with {outcome[2].mention}!" if outcome[0] else f"{outcome[1].mention} defeated {outcome[2].mention}!"
+        description = f"{outcome[1].mention} tied with {outcome[2].mention}!" if outcome[
+            0] else f"{outcome[1].mention} defeated {outcome[2].mention}!"
         description += f"\n{writePlayersInLobby(choices)}"
         return self.embedTemplate(title="Duel Ended", description=description)
+
+    def profile(self, memberData: dict, guild: discord.Guild):
+        member = guild.get_member(memberData['id'])
+        description = f"Money: {memberData['money']}\n Voice Channels Time: {memberData['timeSpentOnVC']} min\n"
+        for game in memberData['games']:
+            stats = memberData['games'][game]
+            description += f"{stats['gameName']}:\n 　　W: {stats['W']} 　L: {stats['L']} 　Game Profit: {stats['Profit']}\n"
+
+        return self.embedTemplate(title=f"{member.display_name}'s profile",
+                                  description=description,
+                                  thumbnail_url=member.display_avatar.url)

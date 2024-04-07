@@ -1,7 +1,7 @@
 import discord
-from GameBot.cogs.helpClasses.embed import Embed
-from GameBot.utils.interactionUserMember import interactionUserMember
-from GameBot.utils.interactionRespond import interactionRespond
+from cogs.helpClasses.embed import Embed
+from utils.interactionUserMember import interactionUserMember
+from utils.interactionRespond import interactionRespond
 
 
 class Lobby(discord.ui.View):
