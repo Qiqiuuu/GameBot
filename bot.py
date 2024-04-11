@@ -12,12 +12,12 @@ class GameBot(commands.Bot):
 
     async def on_ready(self):
         print(f'{self.user} has connected to Discord!')
+        self.dataBase = DataBase(self)
         await self.load_extension('cogs.rockPaperScissors')
         await self.load_extension('cogs.russianRoulette')
         await self.load_extension('cogs.dataBase')
         synced = await self.tree.sync()
         print(f'Synced {len(synced)} commands.')
-        self.dataBase = DataBase(self)
         self.fetchDataToDataBase()
         self.fetchGamesToUsers(synced)
         print(f"Fetched data")

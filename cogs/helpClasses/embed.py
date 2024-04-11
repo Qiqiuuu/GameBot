@@ -57,14 +57,16 @@ class Embed:
         description = "Duel was terminated due to a lack of response"
         return self.embedTemplate(title="Duel Terminated", description=description)
 
-    def challengeDuel(self, challengingUser, challengedUser):
-        description = f"{challengingUser.mention} challenged {challengedUser.mention} in Rock, Paper, Scissors"
+    def challengeDuel(self, challengingUser, challengedUser, bet):
+        description = f"{challengingUser.mention} challenged {challengedUser.mention} in Rock, Paper, Scissors!"
+        description += f"\nBet: {bet} :coin:" if bet > 0 else ""
         return self.embedTemplate(title="Upcoming Duel", description=description,
                                   thumbnail_url=challengedUser.display_avatar.url)
 
-    def returnDuel(self, outcome, choices):
+    def returnDuel(self, outcome, choices, bet):
         description = f"{outcome[1].mention} tied with {outcome[2].mention}!" if outcome[
             0] else f"{outcome[1].mention} defeated {outcome[2].mention}!"
+        description += f"\n{outcome[1].mention} won {bet} :coin:" if bet > 0 else ""
         description += f"\n{writePlayersInLobby(choices)}"
         return self.embedTemplate(title="Duel Ended", description=description)
 
