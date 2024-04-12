@@ -13,6 +13,7 @@ class ButtonsRoulette(discord.ui.View):
         self.interaction = interaction
         self.playerList = playerList
         self.embed = Embed()
+        self.round = 1
 
     @discord.ui.button(label='Next Round 🔫', style=discord.ButtonStyle.grey)
     async def addButton(self, interaction: discord.Interaction, button: discord.ui.Button):
@@ -26,10 +27,12 @@ class ButtonsRoulette(discord.ui.View):
                 isDead, deadPlayer = self.russianRoulette.roulette()
                 if isDead:
                     await self.interaction.edit_original_response(
-                        embed=self.embed.rouletteDied(deadPlayer, self.russianRoulette.getPlayerStatus()))
+                        embed=self.embed.rouletteDied(deadPlayer, self.russianRoulette.getPlayerStatus(), self.round))
+                    self.round += 1
                 else:
                     await self.interaction.edit_original_response(
-                        embed=self.embed.rouletteSurvived(self.russianRoulette.getPlayerStatus()))
+                        embed=self.embed.rouletteSurvived(self.russianRoulette.getPlayerStatus(), self.round))
+                    self.round += 1
         else:
             await interaction.response.send_message(content=f"You are not playing!",
                                                     ephemeral=True)

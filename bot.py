@@ -35,7 +35,7 @@ class GameBot(commands.Bot):
                     self.dataBase.checkMember(member)
             print(f"Fetched members from guild: {guild.name}")
 
-    def fetchGamesToUsers(self,synced):
+    def fetchGamesToUsers(self, synced):
         print("Fetching Games")
         for command in synced:
             if command.name not in {'profile', 'shop'}:

@@ -43,8 +43,9 @@ class RockPaperScissors(commands.Cog):
             choices = await duelInstance.getHands()
             if self.checkIfPicked(choices):
                 outcome = self.deciceDuel(choices)
-                self.dataBase.addWin(outcome[1], self.gameID, bet)
-                self.dataBase.addLose(outcome[2], self.gameID, bet)
+                if not outcome[0]:
+                    self.dataBase.addWin(outcome[1], self.gameID, bet)
+                    self.dataBase.addLose(outcome[2], self.gameID, bet)
                 await interaction.edit_original_response(
                     embed=embed.returnDuel(outcome, choices, bet), view=None)
             else:
