@@ -19,6 +19,7 @@ class RussianRoulette(commands.Cog):
         self.emoji = ['😀', '😏', '😎', '😜', '😱', '🤡', '🤠', '🎃']
         self.playerStatus = None
         self.result = None
+        self.gameID = 1225538557171470348
 
     @app_commands.command(name='russianroulette', description='Let roulette spin!')
     async def russianRoulette(self, interaction: discord.Interaction, bet: int = 0):
@@ -34,9 +35,9 @@ class RussianRoulette(commands.Cog):
             await self.interaction.edit_original_response(embed=self.embed.rouletteStart(self.playerStatus),
                                                           view=rouletteView)
             winner, losers = await rouletteView.returnResults()
-            self.bot.getdataBase().addWin(winner, 1225538557171470348, bet * len(losers))
+            self.bot.getdataBase().addWin(winner, self.gameID, bet * len(losers))
             for member in losers:
-                self.bot.getdataBase().addLose(member, 1225538557171470348, bet)
+                self.bot.getdataBase().addLose(member, self.gameID, bet)
 
             await self.interaction.edit_original_response(embed=self.embed.rouletteEnd(winner, (bet * len(losers))),
                                                           view=None)
