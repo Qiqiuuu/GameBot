@@ -84,3 +84,15 @@ class Embed:
         return self.embedTemplate(title=f"**{member.display_name}'s profile**",
                                   description=description,
                                   thumbnail_url=member.display_avatar.url)
+
+
+
+    def casinoLobby(self):
+        description = f"Choose from the list game which you would like to play and join it, then leave it!"
+        return self.embedTemplate(title="Welcome to the Casino!", description=description)
+
+
+    def mainBlackJack(self):
+        description = f"test"
+        return self.embedTemplate(title="Black Jack", description=description)
+
