@@ -1,3 +1,5 @@
+import asyncio
+
 import discord
 from utils.interactionUserMember import interactionUserMember
 from utils.interactionRespond import interactionRespond
@@ -18,6 +20,7 @@ class ButtonsRoulette(discord.ui.View):
     @discord.ui.button(label='Next Round 🔫', style=discord.ButtonStyle.grey)
     async def addButton(self, interaction: discord.Interaction, button: discord.ui.Button):
         interactionUser = interactionUserMember(interaction)
+        await asyncio.sleep(1)
         if interactionUser in self.playerList:
             isWinner, alivePlayers = self.russianRoulette.checkAlivePlayers()
             if isWinner:

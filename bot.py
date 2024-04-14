@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 from cogs.dataBase import DataBase
+from cogs.casino import Casino
 
 
 # bot class
@@ -9,6 +10,7 @@ class GameBot(commands.Bot):
     def __init__(self):
         super().__init__(command_prefix='!', intents=discord.Intents.all())
         self.dataBase = None
+        self.casinoDataBase = None
 
     async def on_ready(self):
         print(f'{self.user} has connected to Discord!')
@@ -16,6 +18,11 @@ class GameBot(commands.Bot):
         await self.load_extension('cogs.rockPaperScissors')
         await self.load_extension('cogs.russianRoulette')
         await self.load_extension('cogs.dataBase')
+        await self.load_extension('cogs.casino')
+        self.casinoDataBase = Casino(self)
+        self.checkGuilds()
+        self.casinoDataBase.syncChannels()
+        await self.casinoDataBase.clearChannels()
         synced = await self.tree.sync()
         print(f'Synced {len(synced)} commands.')
         self.fetchDataToDataBase()
@@ -38,6 +45,11 @@ class GameBot(commands.Bot):
     def fetchGamesToUsers(self, synced):
         print("Fetching Games")
         for command in synced:
-            if command.name not in {'profile', 'shop'}:
+            if command.name not in {'profile', 'shop', "setcasinochannel"}:
                 for guild in self.guilds:
                     self.dataBase.addGame(guild, command.id, command.name)
+
+    def checkGuilds(self):
+        print("Getting casino channels")
+        for guild in self.guilds:
+            self.casinoDataBase.checkGuild(guild)

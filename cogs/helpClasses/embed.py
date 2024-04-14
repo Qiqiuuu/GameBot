@@ -67,7 +67,8 @@ class Embed:
 
     def returnDuel(self, outcome, choices, bet):
         description = f"{outcome[1].mention} tied with {outcome[2].mention}!" if outcome[
-            0] else f"{outcome[1].mention} defeated {outcome[2].mention}!\n{outcome[1].mention} won {bet} :coin:" if bet > 0 else ""
+            0] else f"{outcome[1].mention} defeated {outcome[2].mention}!"
+        description += "\n{outcome[1].mention} won {bet} :coin:" if bet > 0 and not outcome[0] else ""
         description += f"\n{writePlayersInLobby(choices)}"
         return self.embedTemplate(title="**Duel Ended**", description=description)
 
@@ -75,7 +76,7 @@ class Embed:
         gamesEmoji = {'rps': ':rock:', 'russianroulette' : ':gun:'}
         gamesNames = {'rps': 'Rock, Paper, Scissors', 'russianroulette' : 'Russian Roulette'}
         member = guild.get_member(memberData['id'])
-        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {memberData['timeSpentOnVC']} min\n"
+        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {memberData['timeSpentOnVC']/60}h\n"
         for game in memberData['games']:
             stats = memberData['games'][game]
             description += f"{gamesEmoji[stats['gameName']]} **{gamesNames[stats['gameName']]}:**\n 　　W: {stats['W']} 　L: {stats['L']} 　Game Profit: {stats['Profit']}\n"
