@@ -5,13 +5,16 @@ import json
 from discord.components import SelectMenu
 
 from utils.interactionRespond import interactionRespond
+from utils.interactionUserMember import interactionUserMember
 from utils.getChannel import getChannel
+from cogs.helpClasses.casinoView import CasinoView
 
 
 class Casino(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.channelsData = {}
+        self.playingUsers = {}
 
     @app_commands.command(name='setcasinochannel', description="Set this channel for your Casino!")
     async def setCasino(self, interaction: discord.Interaction):
@@ -42,10 +45,11 @@ class Casino(commands.Cog):
         data = self.getData()
         for entry in data["guilds"]:
             self.channelsData.update({entry["guildID"]: entry["casinoChannel"]})
+            self.playingUsers.update({entry["guildID"]: []})
 
     async def clearChannels(self):
         for guildID, channelID in self.channelsData.items():
-            channel = getChannel(channelID,guildID,self.bot)
+            channel = getChannel(channelID, guildID, self.bot)
             if channel:
                 await channel.purge()
         print("Channels purged")
@@ -57,14 +61,28 @@ class Casino(commands.Cog):
         except FileNotFoundError:
             print("Couldn't open casinoChannels file")
 
-
-    def casinoMenu(self):
+    async def casinoMenu(self):
         for guildID, channelID in self.channelsData.items():
             channel = getChannel(channelID, guildID, self.bot)
+            casinoView = CasinoView(self.bot, self)
             if channel:
-                channel.send
+                await channel.send(view=casinoView)
 
+    def addPlayer(self, interaction: discord.Interaction):
+        guild = self.playingUsers[interaction.guild.id]
+        guild.append(interaction.user.id)
+        print(self.playingUsers)
 
+    def removePlayer(self, interaction: discord.Interaction):
+        guild = self.playingUsers[interaction.guild.id]
+        if interaction.user.id in guild:
+            guild.remove(interaction.user.id)
+        else:
+            return False
+
+    def getPlayers(self, interaction: discord.Interaction):
+        guild = self.playingUsers[interaction.guild.id]
+        return guild
 
 
 async def setup(bot):
