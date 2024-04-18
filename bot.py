@@ -23,6 +23,7 @@ class GameBot(commands.Bot):
         self.checkGuilds()
         self.casinoDataBase.syncChannels()
         await self.casinoDataBase.clearChannels()
+        await self.casinoDataBase.casinoMenu()
         synced = await self.tree.sync()
         print(f'Synced {len(synced)} commands.')
         self.fetchDataToDataBase()
