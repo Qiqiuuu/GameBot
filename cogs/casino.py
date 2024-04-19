@@ -13,11 +13,12 @@ from cogs.helpClasses.embed import Embed
 
 class Casino(commands.Cog):
     def __init__(self, bot):
+        self.messageBlackJackID = {}
         self.bot = bot
         self.channelsData = {}
         self.playingUsers = {}
         self.embed = Embed()
-        self.messageID = {}
+        self.messageCasinoMenuID = {}
         self.casinoView = CasinoView(self.bot, self)
 
     @app_commands.command(name='setcasinochannel', description="Set this channel for your Casino!")
@@ -77,7 +78,21 @@ class Casino(commands.Cog):
                 mID = await channel.send(view=self.casinoView,
                                          embeds=[self.embed.casinoWelcome(),
                                                  self.embed.casinoLobby(self.playingUsers[guildID])])
-                self.messageID.update({guildID: mID})
+                self.messageCasinoMenuID.update({guildID: mID})
+
+    async def blackJack(self):
+        for guildID, channelID in self.channelsData.items():
+            channel = getChannel(channelID, guildID, self.bot)
+            games = self.casinoView.getGames()
+            for guild in self.playingUsers:
+                for game in games:
+                    if game not in self.playingUsers[guild]:
+                        self.playingUsers[guild].update({game: []})
+            if channel:
+                mID = await channel.send(view=self.casinoView,
+                                         embeds=[self.embed.casinoWelcome(),
+                                                 self.embed.casinoLobby(self.playingUsers[guildID])])
+                self.messageBlackJackID.update({guildID: mID})
 
     def addPlayer(self, interaction: discord.Interaction, game: str):
         guild = self.playingUsers[interaction.guild.id]
@@ -100,10 +115,10 @@ class Casino(commands.Cog):
         return guild
 
     async def refreshMenuMessage(self, guildID):
-        if guildID in self.messageID:
+        if guildID in self.messageCasinoMenuID:
             channelID = self.channelsData[guildID]
             channel = self.bot.get_channel(channelID)
-            messageID = self.messageID[guildID]
+            messageID = self.messageCasinoMenuID[guildID]
             message = await channel.fetch_message(messageID.id)
             await message.edit(view=self.casinoView,
                                embeds=[self.embed.casinoWelcome(), self.embed.casinoLobby(self.playingUsers[guildID])])

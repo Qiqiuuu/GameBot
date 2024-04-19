@@ -6,7 +6,7 @@ from utils.interactionRespond import interactionRespond
 from cogs.helpClasses.embed import Embed
 
 
-class ButtonsRoulette(discord.ui.View):
+class RouletteView(discord.ui.View):
     def __init__(self, interaction, playerList, russianRoulette, bet):
         super().__init__()
         self.russianRoulette = russianRoulette
