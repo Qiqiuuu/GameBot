@@ -30,7 +30,7 @@ class Embed:
         return self.embedTemplate(title=f"**Russian Roulette**", description=description)
 
     def rouletteEnd(self, winner: discord.Member, wholeBet: int):
-        description = f"{winner.mention} **won{' '+str(wholeBet)+' :coin:' if wholeBet > 0 else ''}!** 👏"
+        description = f"{winner.mention} **won{' ' + str(wholeBet) + ' :coin:' if wholeBet > 0 else ''}!** 👏"
         return self.embedTemplate(title=f"**Russian Roulette**", description=description)
 
     def startLobby(self, gameName: str, players: list, bet: int):
@@ -73,10 +73,10 @@ class Embed:
         return self.embedTemplate(title="**Duel Ended**", description=description)
 
     def profile(self, memberData: dict, guild: discord.Guild):
-        gamesEmoji = {'rps': ':rock:', 'russianroulette' : ':gun:'}
-        gamesNames = {'rps': 'Rock, Paper, Scissors', 'russianroulette' : 'Russian Roulette'}
+        gamesEmoji = {'rps': ':rock:', 'russianroulette': ':gun:'}
+        gamesNames = {'rps': 'Rock, Paper, Scissors', 'russianroulette': 'Russian Roulette'}
         member = guild.get_member(memberData['id'])
-        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {memberData['timeSpentOnVC']/60}h\n"
+        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {memberData['timeSpentOnVC'] / 60}h\n"
         for game in memberData['games']:
             stats = memberData['games'][game]
             description += f"{gamesEmoji[stats['gameName']]} **{gamesNames[stats['gameName']]}:**\n 　　W: {stats['W']} 　L: {stats['L']} 　Game Profit: {stats['Profit']}\n"
@@ -85,14 +85,17 @@ class Embed:
                                   description=description,
                                   thumbnail_url=member.display_avatar.url)
 
-
-
-    def casinoLobby(self):
-        description = f"Choose from the list game which you would like to play and join it, then leave it!"
+    def casinoWelcome(self):
+        description = f"Choose from the list, game which you would like to play and join it, then leave it!"
         return self.embedTemplate(title="Welcome to the Casino!", description=description)
 
+    def casinoLobby(self, playerList: dict):
+        description = f"Current playing users: \n"
+        for game, players in playerList.items():
+            playersStr = ', '.join(player.global_name for player in players)
+            description += f"**{game}:** {playersStr}\n"
+        return self.embedTemplate(title="Casino Lobby", description=description)
 
     def mainBlackJack(self):
         description = f"test"
         return self.embedTemplate(title="Black Jack", description=description)
-
