@@ -6,7 +6,7 @@ from discord import app_commands
 from discord.ext import commands
 from cogs.helpClasses.lobby import Lobby
 from cogs.helpClasses.embed import Embed
-from cogs.helpClasses.buttonsRoulette import ButtonsRoulette
+from cogs.helpClasses.rouletteView import RouletteView
 from bot import GameBot
 
 
@@ -29,7 +29,7 @@ class RussianRoulette(commands.Cog):
 
         await asyncio.sleep(2)
         if self.result:
-            rouletteView = ButtonsRoulette(interaction, self.playerList, self, bet)
+            rouletteView = RouletteView(interaction, self.playerList, self, bet)
             self.playerStatus = self.assignStatus()
 
             await self.interaction.edit_original_response(embed=self.embed.rouletteStart(self.playerStatus),

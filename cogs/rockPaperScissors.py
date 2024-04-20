@@ -1,8 +1,8 @@
 import discord
 from discord import app_commands
 from discord.ext import commands
-from cogs.helpClasses.buttonsDuel import DuelView
-from cogs.helpClasses.buttonsHand import HandView
+from cogs.helpClasses.duelView import DuelView
+from cogs.helpClasses.handView import HandView
 from cogs.helpClasses.embed import Embed
 from utils.interactionRespond import interactionRespond
 from utils.interactionUserMember import interactionUserMember
