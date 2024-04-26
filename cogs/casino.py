@@ -9,6 +9,8 @@ from utils.interactionUserMember import interactionUserMember
 from utils.getChannel import getChannel
 from cogs.helpClasses.casinoView import CasinoView
 from cogs.helpClasses.embed import Embed
+from cogs.helpClasses.blackjackView import BlackJackView
+from cogs.blackJack import BlackJack
 
 
 class Casino(commands.Cog):
@@ -20,6 +22,7 @@ class Casino(commands.Cog):
         self.embed = Embed()
         self.messageCasinoMenuID = {}
         self.casinoView = CasinoView(self.bot, self)
+        self.blackjackView = BlackJackView(self.bot)
 
     @app_commands.command(name='setcasinochannel', description="Set this channel for your Casino!")
     async def setCasino(self, interaction: discord.Interaction):
@@ -35,6 +38,12 @@ class Casino(commands.Cog):
         self.syncChannels()
         interaction.response.send_message("Casino is set")
         await interactionRespond(interaction)
+
+    async def afterInit(self):
+        self.syncChannels()
+        await self.clearChannels()
+        await self.casinoMenu()
+        await self.blackJack()
 
     def checkGuild(self, guild: discord.Guild):
         data = self.getData()
@@ -89,9 +98,9 @@ class Casino(commands.Cog):
                     if game not in self.playingUsers[guild]:
                         self.playingUsers[guild].update({game: []})
             if channel:
-                mID = await channel.send(view=self.casinoView,
-                                         embeds=[self.embed.casinoWelcome(),
-                                                 self.embed.casinoLobby(self.playingUsers[guildID])])
+                BJ = BlackJack(self.bot, channelID, self.playingUsers[guildID]["Black Jack"])
+                await BJ.blackJackMain(channelID)
+                mID = BJ.retMID()
                 self.messageBlackJackID.update({guildID: mID})
 
     def addPlayer(self, interaction: discord.Interaction, game: str):

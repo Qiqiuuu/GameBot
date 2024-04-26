@@ -96,6 +96,13 @@ class Embed:
             description += f"**{game}:** {playersStr}\n"
         return self.embedTemplate(title="Casino Lobby", description=description)
 
-    def mainBlackJack(self):
-        description = f"test"
+    def blackjackHelp(self):
+        description = f"tu kiedyś będzie help"
+        return self.embedTemplate(title="Black Jack Help", description=description)
+
+    def mainBlackJack(self, cardsOnTable: dict):
+        description = f"Croupier Cards: {' '.join(cardsOnTable['croupier'])}\n"
+        for player, cards in cardsOnTable.items():
+            if player != 'croupier':
+                description += f"{player}: {' '.join(cards)}"
         return self.embedTemplate(title="Black Jack", description=description)
