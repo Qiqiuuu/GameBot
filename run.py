@@ -1,4 +1,5 @@
 import datetime
+import logging
 import os
 from dotenv import load_dotenv
 from bot import GameBot
@@ -11,6 +12,8 @@ myToken = os.getenv('TOKEN')
 bot = GameBot()
 
 joinTimes = {}
+
+logging.getLogger("discord").setLevel(logging.WARN)
 
 
 @bot.event
@@ -29,5 +32,5 @@ async def on_voice_state_update(member, before, after):
             del joinTimes[member.id]
 
 
-bot.run(str(myToken))
+bot.run(str(myToken), log_level=logging.WARN)
 
