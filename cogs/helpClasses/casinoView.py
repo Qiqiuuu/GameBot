@@ -22,7 +22,10 @@ class CasinoView(discord.ui.View):
     @discord.ui.button(label="Join", style=discord.ButtonStyle.green)
     async def joinButton(self, interaction: discord.Interaction, button: discord.ui.Button):
         if self.currentOption is not None:
-            self.casino.addPlayer(interaction, self.currentOption)
+            print(self.currentOption)
+            if self.currentOption == "Black Jack":
+                self.casino.addPlayer(interaction, self.currentOption)
+                await self.casino.blackJackGame(interaction.message)
         await self.casino.refreshMenuMessage(interaction.guild.id)
         await interactionRespond(interaction)
 

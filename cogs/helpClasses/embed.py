@@ -106,3 +106,7 @@ class Embed:
             if player != 'croupier':
                 description += f"{player}: {' '.join(cards)}"
         return self.embedTemplate(title="Black Jack", description=description)
+
+    def waitingBlackJack(self):
+        description = f"Join Black Jack lobby to start a game"
+        return self.embedTemplate(title="Black Jack Waiting Room", description=description)

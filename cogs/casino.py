@@ -19,6 +19,7 @@ class Casino(commands.Cog):
         self.bot = bot
         self.channelsData = {}
         self.playingUsers = {}
+        self.startingLobby = {}
         self.embed = Embed()
         self.messageCasinoMenuID = {}
         self.casinoView = CasinoView(self.bot, self)
@@ -60,6 +61,7 @@ class Casino(commands.Cog):
         for entry in data["guilds"]:
             self.channelsData.update({entry["guildID"]: entry["casinoChannel"]})
             self.playingUsers.update({entry["guildID"]: {}})
+            self.startingLobby.update({entry["guildID"]: {}})
 
     async def clearChannels(self):
         for guildID, channelID in self.channelsData.items():
@@ -83,6 +85,7 @@ class Casino(commands.Cog):
                 for game in games:
                     if game not in self.playingUsers[guild]:
                         self.playingUsers[guild].update({game: []})
+                        self.startingLobby[guild].update({game: False})
             if channel:
                 mID = await channel.send(view=self.casinoView,
                                          embeds=[self.embed.casinoWelcome(),
@@ -98,10 +101,26 @@ class Casino(commands.Cog):
                     if game not in self.playingUsers[guild]:
                         self.playingUsers[guild].update({game: []})
             if channel:
-                BJ = BlackJack(self.bot, channelID, self.playingUsers[guildID]["Black Jack"])
-                await BJ.blackJackMain(channelID)
-                mID = BJ.retMID()
+                mID = await channel.send(embed=self.embed.waitingBlackJack())
                 self.messageBlackJackID.update({guildID: mID})
+
+    async def blackJackGame(self, interaction: discord.Interaction):
+        message = self.messageBlackJackID[interaction.guild.id]
+        if self.playingUsers[message.guild.id]["Black Jack"] and self.startingLobby[message.guild.id][
+            "Black Jack"] == False:
+            self.startingLobby[message.guild.id]["Black Jack"] = True
+            # oczekiwanie np 20 sec i zobacz czy sa ludzie w lobby zaraz przed
+            if not self.playingUsers[message.guild.id]["Black Jack"]:
+                await message.channel.edit(embed=self.embed.waitingBlackJack())
+                return
+            BJ = BlackJack(self.bot, message.channel.id, self.playingUsers[message.guild.id]["Black Jack"])
+            await BJ.blackJackMain(message)
+            BJResults = BJ.retResults()
+            self.startingLobby[message.guild.id]["Black Jack"] = False
+            if self.playingUsers[message.guild.id]["Black Jack"]:
+                await self.blackJackGame(message)
+            else:
+                await message.channel.edit(embed=self.embed.waitingBlackJack())
 
     def addPlayer(self, interaction: discord.Interaction, game: str):
         guild = self.playingUsers[interaction.guild.id]
