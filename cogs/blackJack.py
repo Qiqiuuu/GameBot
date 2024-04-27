@@ -7,6 +7,7 @@ from cogs.helpClasses.embed import Embed
 from cogs.helpClasses.cards import Cards
 from cogs.helpClasses.blackjackGameView import BlackJackGameView
 from utils.interactionUserMember import interactionUserMember
+from utils.interactionRespond import interactionRespond
 
 
 class BlackJack(commands.Cog):
@@ -30,10 +31,6 @@ class BlackJack(commands.Cog):
                 embeds=[self.embed.blackjackHelp(), self.embed.mainBlackJack(self.playersCards)])
             await self.deal()
 
-
-
-
-
     async def deal(self):
         self.croupierFirstCard = self.deck.takeCard()
         self.playersCards['croupier'].append('X')
@@ -54,7 +51,11 @@ class BlackJack(commands.Cog):
                     await self.MID.edit(view=BlackJackGameView(self.bot, self),
                                         embeds=[self.embed.blackjackHelp(),
                                                 self.embed.mainBlackJack(self.playersCards)])
-
+                    if self.checkCards(player):
+                        await asyncio.sleep(0.25)
+                        await self.MID.edit(view=BlackJackGameView(self.bot),
+                                            embeds=[self.embed.blackjackHelp(),
+                                                    self.embed.mainBlackJack(self.playersCards)])
 
     async def updateCards(self, interaction: discord.Interaction):
         interactionUser = interactionUserMember(interaction)
@@ -65,10 +66,39 @@ class BlackJack(commands.Cog):
                                                      embeds=[self.embed.blackjackHelp(),
                                                              self.
                                                      embed.mainBlackJack(self.playersCards)])
+            if self.checkCards(interactionUser):
+                await asyncio.sleep(0.25)
+                await interaction.edit_original_response(view=BlackJackGameView(self.bot),
+                                                         embeds=[self.embed.blackjackHelp(),
+                                                                 self.
+                                                         embed.mainBlackJack(self.playersCards)])
+        interactionRespond(interaction)
+
+    def checkCards(self, member: discord.Member):
+        if self.cardsSum(member) > 21:
+            self.canPlay[member] = True
+            self.playersCards[member] = ["You Lost"]
+            return True
+        return False
+
+    def cardsSum(self, member: discord.Member):
+        sumOfCards = 0
+        cardValue = {'J': 10, 'Q': 10, 'K': 10, 'A': 11}
+        for card in self.playersCards[member]:
+            if card in cardValue:
+                sumOfCards += cardValue[card]
+            else:
+                sumOfCards += card
+        return sumOfCards
 
     def retMID(self):
         return self.MID
 
+    def retCanPlay(self):
+        return self.canPlay
+
+    def setTrueCanPlay(self, member: discord.Member):
+        self.canPlay[member] = True
 
     def updatePlayersList(self, playersList):
         self.playersList = playersList
