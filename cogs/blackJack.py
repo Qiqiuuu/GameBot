@@ -43,13 +43,13 @@ class BlackJack(commands.Cog):
 
     async def croupierHit(self):
         self.playersCards['croupier'][0] = self.croupierFirstCard
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(0.75)
         await self.MID.edit(view=BlackJackGameView(self.bot, self),
                             embeds=[self.embed.blackjackHelp(),
                                     self.embed.mainBlackJack(self.playersCards)])
         while self.cardsSum("croupier") <= 17:
             self.playersCards['croupier'].append(self.deck.takeCard())
-            await asyncio.sleep(0.25)
+            await asyncio.sleep(0.75)
             await self.MID.edit(view=BlackJackGameView(self.bot, self),
                                 embeds=[self.embed.blackjackHelp(),
                                         self.embed.mainBlackJack(self.playersCards)])
@@ -58,12 +58,12 @@ class BlackJack(commands.Cog):
     async def deal(self):
         self.croupierFirstCard = self.deck.takeCard()
         self.playersCards['croupier'].append('X')
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(0.75)
         await self.MID.edit(view=BlackJackGameView(self.bot, self),
                             embeds=[self.embed.blackjackHelp(),
                                     self.embed.mainBlackJack(self.playersCards)])
         self.playersCards['croupier'].append(self.deck.takeCard())
-        await asyncio.sleep(0.25)
+        await asyncio.sleep(0.75)
         await self.MID.edit(view=BlackJackGameView(self.bot, self),
                             embeds=[self.embed.blackjackHelp(),
                                     self.embed.mainBlackJack(self.playersCards)])
@@ -71,13 +71,13 @@ class BlackJack(commands.Cog):
             for player, cards in self.playersCards.items():
                 if player != 'croupier':
                     cards.append(self.deck.takeCard())
-                    await asyncio.sleep(0.25)
+                    await asyncio.sleep(0.75)
                     await self.MID.edit(view=BlackJackGameView(self.bot, self),
                                         embeds=[self.embed.blackjackHelp(),
                                                 self.embed.mainBlackJack(self.playersCards)])
                     if self.checkCards(player):
                         await asyncio.sleep(0.25)
-                        await self.MID.edit(view=BlackJackGameView(self.bot),
+                        await self.MID.edit(view=BlackJackGameView(self.bot,self),
                                             embeds=[self.embed.blackjackHelp(),
                                                     self.embed.mainBlackJack(self.playersCards)])
 
@@ -85,13 +85,13 @@ class BlackJack(commands.Cog):
         interactionUser = interactionUserMember(interaction)
         if interactionUser.id in self.playersList:
             self.playersCards[interactionUser].append(self.deck.takeCard())
-            await asyncio.sleep(0.25)
+            await asyncio.sleep(0.75)
             await interaction.edit_original_response(view=BlackJackGameView(self.bot),
                                                      embeds=[self.embed.blackjackHelp(),
                                                              self.
                                                      embed.mainBlackJack(self.playersCards)])
             if self.checkCards(interactionUser):
-                await asyncio.sleep(0.25)
+                await asyncio.sleep(0.75)
                 await interaction.edit_original_response(view=BlackJackGameView(self.bot),
                                                          embeds=[self.embed.blackjackHelp(),
                                                                  self.

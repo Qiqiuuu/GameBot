@@ -27,6 +27,7 @@ class GameBot(commands.Bot):
         self.fetchDataToDataBase()
         self.fetchGamesToUsers(synced)
         print(f"Fetched data")
+        print(f"Bot ready!")
 
     def getdataBase(self):
         return self.dataBase

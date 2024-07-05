@@ -76,7 +76,7 @@ class Embed:
         gamesEmoji = {'rps': ':rock:', 'russianroulette': ':gun:'}
         gamesNames = {'rps': 'Rock, Paper, Scissors', 'russianroulette': 'Russian Roulette'}
         member = guild.get_member(memberData['id'])
-        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {memberData['timeSpentOnVC'] / 60}h\n"
+        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {int(memberData['timeSpentOnVC'] / 60)}h\n"
         for game in memberData['games']:
             stats = memberData['games'][game]
             description += f"{gamesEmoji[stats['gameName']]} **{gamesNames[stats['gameName']]}:**\n 　　W: {stats['W']} 　L: {stats['L']} 　Game Profit: {stats['Profit']}\n"

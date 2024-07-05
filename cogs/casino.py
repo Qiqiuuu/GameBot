@@ -111,7 +111,7 @@ class Casino(commands.Cog):
             self.startingLobby[message.guild.id]["Black Jack"] = True
             # oczekiwanie np 20 sec i zobacz czy sa ludzie w lobby zaraz przed
             if not self.playingUsers[message.guild.id]["Black Jack"]:
-                await message.channel.edit(embed=self.embed.waitingBlackJack())
+                await message.edit(embed=self.embed.waitingBlackJack(), view=None)
                 return
             BJ = BlackJack(self.bot, message.channel.id, self.playingUsers[message.guild.id]["Black Jack"])
             await BJ.blackJackMain(message)
@@ -120,7 +120,7 @@ class Casino(commands.Cog):
             if self.playingUsers[message.guild.id]["Black Jack"]:
                 await self.blackJackGame(message)
             else:
-                await message.channel.edit(embed=self.embed.waitingBlackJack())
+                await message.edit(embed=self.embed.waitingBlackJack(), view=None)
 
     def addPlayer(self, interaction: discord.Interaction, game: str):
         guild = self.playingUsers[interaction.guild.id]

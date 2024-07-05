@@ -21,20 +21,20 @@ class CasinoView(discord.ui.View):
 
     @discord.ui.button(label="Join", style=discord.ButtonStyle.green)
     async def joinButton(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interactionRespond(interaction)
         if self.currentOption is not None:
-            print(self.currentOption)
             if self.currentOption == "Black Jack":
                 self.casino.addPlayer(interaction, self.currentOption)
+                await self.casino.refreshMenuMessage(interaction.guild.id)
                 await self.casino.blackJackGame(interaction.message)
-        await self.casino.refreshMenuMessage(interaction.guild.id)
-        await interactionRespond(interaction)
 
     @discord.ui.button(label="Leave", style=discord.ButtonStyle.red)
     async def leaveButton(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interactionRespond(interaction)
         if self.currentOption is not None:
             self.casino.removePlayer(interaction, self.currentOption)
-        await self.casino.refreshMenuMessage(interaction.guild.id)
-        await interactionRespond(interaction)
+            await self.casino.refreshMenuMessage(interaction.guild.id)
+
 
     def getGames(self):
         return self.games
