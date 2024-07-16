@@ -29,28 +29,34 @@ class BlackJack(commands.Cog):
         channel = self.bot.get_channel(message.channel.id)
         if channel:
             self.MID = await message.edit(
-                view=BlackJackGameView(self.bot, self),
+                view=None,
                 embeds=[self.embed.blackjackHelp(), self.embed.mainBlackJack(self.playersCards)])
             await self.deal()
-            await self.waitForPlayersOrTimeout(30)
+            self.MID = await message.edit(
+                view=BlackJackGameView(self.bot, self),
+                embeds=[self.embed.blackjackHelp(), self.embed.mainBlackJack(self.playersCards)])
+            await self.waitForPlayersOrTimeout(5)
+            self.MID = await message.edit(
+                view=None,
+                embeds=[self.embed.blackjackHelp(), self.embed.mainBlackJack(self.playersCards)])
             await self.croupierHit()
             self.checkResults()
             await asyncio.sleep(0.5)
             self.MID = await message.edit(
-                view=BlackJackGameView(self.bot, self),
+                view=None,
                 embeds=[self.embed.blackjackHelp(), self.embed.mainBlackJack(self.playersCards)])
-
+            await asyncio.sleep(2)
 
     async def croupierHit(self):
         self.playersCards['croupier'][0] = self.croupierFirstCard
         await asyncio.sleep(0.75)
-        await self.MID.edit(view=BlackJackGameView(self.bot, self),
+        await self.MID.edit(view=None,
                             embeds=[self.embed.blackjackHelp(),
                                     self.embed.mainBlackJack(self.playersCards)])
         while self.cardsSum("croupier") <= 17:
             self.playersCards['croupier'].append(self.deck.takeCard())
             await asyncio.sleep(0.75)
-            await self.MID.edit(view=BlackJackGameView(self.bot, self),
+            await self.MID.edit(view=None,
                                 embeds=[self.embed.blackjackHelp(),
                                         self.embed.mainBlackJack(self.playersCards)])
         self.croupierResult = self.cardsSum("croupier")
@@ -59,12 +65,12 @@ class BlackJack(commands.Cog):
         self.croupierFirstCard = self.deck.takeCard()
         self.playersCards['croupier'].append('X')
         await asyncio.sleep(0.75)
-        await self.MID.edit(view=BlackJackGameView(self.bot, self),
+        await self.MID.edit(view=None,
                             embeds=[self.embed.blackjackHelp(),
                                     self.embed.mainBlackJack(self.playersCards)])
         self.playersCards['croupier'].append(self.deck.takeCard())
         await asyncio.sleep(0.75)
-        await self.MID.edit(view=BlackJackGameView(self.bot, self),
+        await self.MID.edit(view=None,
                             embeds=[self.embed.blackjackHelp(),
                                     self.embed.mainBlackJack(self.playersCards)])
         for _ in range(2):
@@ -72,12 +78,12 @@ class BlackJack(commands.Cog):
                 if player != 'croupier':
                     cards.append(self.deck.takeCard())
                     await asyncio.sleep(0.75)
-                    await self.MID.edit(view=BlackJackGameView(self.bot, self),
+                    await self.MID.edit(view=None,
                                         embeds=[self.embed.blackjackHelp(),
                                                 self.embed.mainBlackJack(self.playersCards)])
                     if self.checkCards(player):
                         await asyncio.sleep(0.25)
-                        await self.MID.edit(view=BlackJackGameView(self.bot,self),
+                        await self.MID.edit(view=None,
                                             embeds=[self.embed.blackjackHelp(),
                                                     self.embed.mainBlackJack(self.playersCards)])
 
@@ -86,35 +92,40 @@ class BlackJack(commands.Cog):
         if interactionUser.id in self.playersList:
             self.playersCards[interactionUser].append(self.deck.takeCard())
             await asyncio.sleep(0.75)
-            await interaction.edit_original_response(view=BlackJackGameView(self.bot),
+            await interaction.edit_original_response(view=None,
                                                      embeds=[self.embed.blackjackHelp(),
                                                              self.
                                                      embed.mainBlackJack(self.playersCards)])
             if self.checkCards(interactionUser):
                 await asyncio.sleep(0.75)
-                await interaction.edit_original_response(view=BlackJackGameView(self.bot),
+                await interaction.edit_original_response(view=None,
                                                          embeds=[self.embed.blackjackHelp(),
                                                                  self.
                                                          embed.mainBlackJack(self.playersCards)])
-        interactionRespond(interaction)
+        await interactionRespond(interaction)
 
     def checkResults(self):
-        for player in self.playersCards:
-            if self.cardsSum(player) >= self.croupierResult and self.cardsSum(player) > 21:
-                self.results[player] = "Lost"
-            else:
+        filteredPlayerCards = {k: v for k, v in self.playersCards.items() if k != "croupier"}
+        for player in filteredPlayerCards:
+            if (self.cardsSum(player) == 21 and self.croupierResult != 21) or (
+                    self.cardsSum(player) < 21 < self.croupierResult) or (
+                    (self.cardsSum(player) < 21 and self.croupierResult < 21) and self.cardsSum(
+                player) < self.croupierResult):
                 self.playersCards[player] = ["You Won"]
                 self.results[player] = "Won"
+            else:
+                self.playersCards[player] = ["You Lost"]
+                self.results[player] = "Lost"
 
     async def waitForPlayersOrTimeout(self, timeoutSecs: int):
         try:
             await asyncio.wait_for(self.waitForPlayers(), timeout=timeoutSecs)
-            return True
         except asyncio.TimeoutError:
-            return False
+            pass
 
     async def waitForPlayers(self):
-        while not self.canPlay:
+        while self.canPlay:
+            print(self.canPlay)
             await asyncio.sleep(1)
 
     def checkCards(self, member: discord.Member):
@@ -140,6 +151,7 @@ class BlackJack(commands.Cog):
 
     def retCanPlay(self):
         return self.canPlay
+
     def retResults(self):
         return self.results
 
