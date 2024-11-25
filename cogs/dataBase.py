@@ -10,6 +10,13 @@ from cogs.helpClasses.embed import Embed
 
 
 class DataBase(commands.Cog):
+
+
+
+    #CAŁA BAZA DO PRZEROBIENIA ZAMIAST SERVERO CENTRALNA TO UZYTKOWNIKOCENTALNA Z SERVERAMI W SRODKU I ICH UNIKALNYMI STATAMI
+
+
+
     def __init__(self, bot):
         self.bot = bot
         self.client = None
@@ -59,7 +66,8 @@ class DataBase(commands.Cog):
                         "name": member.name,
                         "coins": 200,
                         "timeSpentOnVC": 0,
-                        "games": {}
+                        "games": {},
+                        "serviceProfiles": {}
                     }
                 }}
             )
@@ -120,6 +128,17 @@ class DataBase(commands.Cog):
                     )
                     print(f"Added new game {gameName} to guild {guild.name}")
 
+    def addServiceProfile(self, guild: discord.Guild, serviceName, profileID):
+        self.checkGuild(guild)
+        for member in guild.members:
+            if not member.bot:
+                self.guilds.update_one(
+                    {"_id": member.guild.id, f"members.{str(member.id)}": {"$exists": True}},
+                    {"$set": {f"members.{member.id}.serviceProfiles.{serviceName}": profileID}},
+                    upsert=True
+                )
+                print(f"Added new Service {serviceName} to member {member.id}")
+
     def addLose(self, member: discord.Member, gameID, amount: int):
         self.takeMoney(member, amount)
         guildData = self.guilds.find_one({"_id": member.guild.id})
@@ -158,6 +177,12 @@ class DataBase(commands.Cog):
         guildData = self.guilds.find_one({"_id": member.guild.id})
         if str(member.id) in guildData['members']:
             return guildData['members'][str(member.id)]['coins']
+
+    def getProfileID(self, member: discord.Member):
+        guildData = self.guilds.find_one({"_id": member.guild.id})
+        if str(member.id) in guildData['members']:
+            return guildData['members'][str(member.id)]['profiles']
+
 
 async def setup(bot):
     await bot.add_cog(DataBase(bot))
