@@ -139,6 +139,12 @@ class DataBase(commands.Cog):
                 )
                 print(f"Added new Service {serviceName} to member {member.id}")
 
+    def getServiceProfile(self, member: discord.Member, serviceName):
+        guildData = self.guilds.find_one({"_id": member.guild.id})
+        if str(member.id) in guildData['members']:
+            return guildData['members'][str(member.id)][serviceName]
+
+
     def addLose(self, member: discord.Member, gameID, amount: int):
         self.takeMoney(member, amount)
         guildData = self.guilds.find_one({"_id": member.guild.id})
