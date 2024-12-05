@@ -128,10 +128,10 @@ class DataBase(commands.Cog):
                     )
                     print(f"Added new game {gameName} to guild {guild.name}")
 
-    def addServiceProfile(self, guild: discord.Guild, serviceName, profileID):
+    def addServiceProfile(self, guild: discord.Guild, user: discord.Member, serviceName, profileID):
         self.checkGuild(guild)
         for member in guild.members:
-            if not member.bot:
+            if not member.bot and member == user:
                 self.guilds.update_one(
                     {"_id": member.guild.id, f"members.{str(member.id)}": {"$exists": True}},
                     {"$set": {f"members.{member.id}.serviceProfiles.{serviceName}": profileID}},
@@ -141,9 +141,17 @@ class DataBase(commands.Cog):
 
     def getServiceProfile(self, member: discord.Member, serviceName):
         guildData = self.guilds.find_one({"_id": member.guild.id})
-        if str(member.id) in guildData['members']:
-            return guildData['members'][str(member.id)][serviceName]
-
+        print("s")
+        if guildData is None:
+            return None
+        print("ss")
+        members = guildData.get('members', {})
+        memberData = members.get(str(member.id))
+        serviceProfile = memberData.get("serviceProfiles")
+        if memberData is None:
+            return None
+        print("sss")
+        return serviceProfile.get(serviceName, None)
 
     def addLose(self, member: discord.Member, gameID, amount: int):
         self.takeMoney(member, amount)
