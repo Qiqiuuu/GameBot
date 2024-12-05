@@ -19,6 +19,7 @@ class GameBot(commands.Bot):
         await self.load_extension('cogs.russianRoulette')
         await self.load_extension('cogs.dataBase')
         await self.load_extension('cogs.casino')
+        await self.load_extension('cogs.serviceProfiles')
         self.casinoDataBase = Casino(self)
         self.checkGuilds()
         await self.casinoDataBase.afterInit()
@@ -27,6 +28,7 @@ class GameBot(commands.Bot):
         self.fetchDataToDataBase()
         self.fetchGamesToUsers(synced)
         print(f"Fetched data")
+        print(f"Bot ready!")
 
     def getdataBase(self):
         return self.dataBase
@@ -44,7 +46,7 @@ class GameBot(commands.Bot):
     def fetchGamesToUsers(self, synced):
         print("Fetching Games")
         for command in synced:
-            if command.name not in {'profile', 'shop', "setcasinochannel"}:
+            if command.name not in {'profile', 'shop', "setcasinochannel", "checkprofile", "setserviceprofile"}:
                 for guild in self.guilds:
                     self.dataBase.addGame(guild, command.id, command.name)
 

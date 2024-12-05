@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Dict, List
 import discord
 from utils.writePlayersInLobby import writePlayersInLobby
@@ -76,7 +77,7 @@ class Embed:
         gamesEmoji = {'rps': ':rock:', 'russianroulette': ':gun:'}
         gamesNames = {'rps': 'Rock, Paper, Scissors', 'russianroulette': 'Russian Roulette'}
         member = guild.get_member(memberData['id'])
-        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {memberData['timeSpentOnVC'] / 60}h\n"
+        description = f":coin: **Coins:** {memberData['coins']}\n:timer: **Voice Channels Time:** {int(memberData['timeSpentOnVC'] / 60)}h\n"
         for game in memberData['games']:
             stats = memberData['games'][game]
             description += f"{gamesEmoji[stats['gameName']]} **{gamesNames[stats['gameName']]}:**\n 　　W: {stats['W']} 　L: {stats['L']} 　Game Profit: {stats['Profit']}\n"
@@ -106,3 +107,34 @@ class Embed:
             if player != 'croupier':
                 description += f"{player}: {' '.join(cards)}"
         return self.embedTemplate(title="Black Jack", description=description)
+
+    def waitingBlackJack(self):
+        description = f"Join Black Jack lobby to start a game"
+        return self.embedTemplate(title="Black Jack Waiting Room", description=description)
+
+    def setService(self):
+        description = f"You've set your Profile"
+        return self.embedTemplate(title="Set your Profile", description=description)
+
+    def create_steam_profile_embed(self, ret):
+        creation_time = datetime.utcfromtimestamp(ret["time"]).strftime('%Y-%m-%d %H:%M:%S')
+
+        # Create the embed
+        embed = discord.Embed(
+            title=f"{ret['nick']}'s Steam Profile",
+            description=f"Click [here]({ret['url']}) to view the full profile.",
+            color=discord.Color.blue()
+        )
+
+        embed.set_thumbnail(url=ret['avatar'])
+
+        embed.add_field(name="Steam ID", value=ret['steam_id'], inline=False)
+        embed.add_field(name="Games Owned", value=str(ret['games']), inline=True)
+        embed.add_field(name="Total Hours Played", value=f"{ret['hours']} hours", inline=True)
+        embed.add_field(name="Steam Level", value=str(ret['lvl']), inline=True)
+        embed.add_field(name="Account Created", value=creation_time, inline=True)
+        embed.add_field(name="Status", value=ret['status'], inline=False)
+
+        embed.set_footer(text=f"Profile of {ret['nick']}", icon_url=ret['avatar'])
+
+        return embed
