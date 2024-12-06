@@ -1,7 +1,5 @@
 import discord
 
-from utils.interactionUserMember import interactionUserMember
-from utils.interactionRespond import interactionRespond
 
 
 class BlackJackView(discord.ui.View):

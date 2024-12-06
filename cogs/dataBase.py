@@ -6,7 +6,7 @@ import discord
 from dotenv import load_dotenv
 import os
 import urllib.parse
-from cogs.helpClasses.embed import Embed
+from ..cogs.helpClasses.embed import Embed
 
 
 class DataBase(commands.Cog):
@@ -141,16 +141,13 @@ class DataBase(commands.Cog):
 
     def getServiceProfile(self, member: discord.Member, serviceName):
         guildData = self.guilds.find_one({"_id": member.guild.id})
-        print("s")
         if guildData is None:
             return None
-        print("ss")
         members = guildData.get('members', {})
         memberData = members.get(str(member.id))
         serviceProfile = memberData.get("serviceProfiles")
         if memberData is None:
             return None
-        print("sss")
         return serviceProfile.get(serviceName, None)
 
     def addLose(self, member: discord.Member, gameID, amount: int):

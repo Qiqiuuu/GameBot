@@ -4,10 +4,9 @@ import asyncio
 import discord
 from discord import app_commands
 from discord.ext import commands
-from cogs.helpClasses.lobby import Lobby
-from cogs.helpClasses.embed import Embed
-from cogs.helpClasses.rouletteView import RouletteView
-from bot import GameBot
+from ..cogs.helpClasses.lobby import Lobby
+from ..cogs.helpClasses.embed import Embed
+from ..cogs.helpClasses.rouletteView import RouletteView
 
 
 class RussianRoulette(commands.Cog):

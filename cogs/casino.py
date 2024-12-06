@@ -2,15 +2,14 @@ import discord
 from discord import app_commands
 from discord.ext import commands
 import json
-from discord.components import SelectMenu
 
-from utils.interactionRespond import interactionRespond
-from utils.interactionUserMember import interactionUserMember
-from utils.getChannel import getChannel
-from cogs.helpClasses.casinoView import CasinoView
-from cogs.helpClasses.embed import Embed
-from cogs.helpClasses.blackjackView import BlackJackView
-from cogs.blackJack import BlackJack
+from ..utils.interactionRespond import interactionRespond
+from ..utils.interactionUserMember import interactionUserMember
+from ..utils.getChannel import getChannel
+from ..cogs.helpClasses.casinoView import CasinoView
+from ..cogs.helpClasses.embed import Embed
+from ..cogs.helpClasses.blackjackView import BlackJackView
+from ..cogs.blackJack import BlackJack
 
 
 class Casino(commands.Cog):
@@ -48,6 +47,8 @@ class Casino(commands.Cog):
 
     def checkGuild(self, guild: discord.Guild):
         data = self.getData()
+        if data is None or 'guilds' not in data:
+            return
         for entry in data["guilds"]:
             if entry["guildID"] == guild.id:
                 return
@@ -58,6 +59,8 @@ class Casino(commands.Cog):
     def syncChannels(self):
         print("syncing channels")
         data = self.getData()
+        if data is None or 'guilds' not in data:
+            return
         for entry in data["guilds"]:
             self.channelsData.update({entry["guildID"]: entry["casinoChannel"]})
             self.playingUsers.update({entry["guildID"]: {}})

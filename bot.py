@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
-from cogs.dataBase import DataBase
-from cogs.casino import Casino
+from .cogs.dataBase import DataBase
+from .cogs.casino import Casino
 
 
 # bot class
@@ -15,11 +15,11 @@ class GameBot(commands.Bot):
     async def on_ready(self):
         print(f'{self.user} has connected to Discord!')
         self.dataBase = DataBase(self)
-        await self.load_extension('cogs.rockPaperScissors')
-        await self.load_extension('cogs.russianRoulette')
-        await self.load_extension('cogs.dataBase')
-        await self.load_extension('cogs.casino')
-        await self.load_extension('cogs.serviceProfiles')
+        await self.load_extension('GameBot.cogs.rockPaperScissors')
+        await self.load_extension('GameBot.cogs.russianRoulette')
+        await self.load_extension('GameBot.cogs.dataBase')
+        await self.load_extension('GameBot.cogs.casino')
+        await self.load_extension('GameBot.cogs.serviceProfiles')
         self.casinoDataBase = Casino(self)
         self.checkGuilds()
         await self.casinoDataBase.afterInit()

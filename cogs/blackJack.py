@@ -3,11 +3,11 @@ import asyncio
 import discord
 from discord import app_commands
 from discord.ext import commands
-from cogs.helpClasses.embed import Embed
-from cogs.helpClasses.cards import Cards
-from cogs.helpClasses.blackjackGameView import BlackJackGameView
-from utils.interactionUserMember import interactionUserMember
-from utils.interactionRespond import interactionRespond
+from ..cogs.helpClasses.embed import Embed
+from ..cogs.helpClasses.cards import Cards
+from ..cogs.helpClasses.blackjackGameView import BlackJackGameView
+from ..utils.interactionUserMember import interactionUserMember
+from ..utils.interactionRespond import interactionRespond
 
 
 class BlackJack(commands.Cog):

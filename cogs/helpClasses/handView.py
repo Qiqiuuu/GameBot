@@ -1,8 +1,8 @@
 import discord
 from typing import Optional
-from cogs.helpClasses.embed import Embed
-from utils.interactionUserMember import interactionUserMember
-from utils.interactionRespond import interactionRespond
+from ...cogs.helpClasses.embed import Embed
+from ...utils.interactionUserMember import interactionUserMember
+from ...utils.interactionRespond import interactionRespond
 
 class HandView(discord.ui.View):
     def __init__(self, challengingUser: discord.Member, challengedUser: discord.Member, bot):

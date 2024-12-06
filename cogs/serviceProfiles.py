@@ -1,16 +1,14 @@
 import json
 import os
-import random
-import asyncio
 
 import discord
 import requests
 from discord import app_commands
 from discord.ext import commands
-from cogs.helpClasses.embed import Embed
+from ..cogs.helpClasses.embed import Embed
 from dotenv import load_dotenv
 
-from GameBot.utils.interactionRespond import interactionRespond
+from ..utils.interactionRespond import interactionRespond
 
 
 class serviceProfiles(commands.Cog):

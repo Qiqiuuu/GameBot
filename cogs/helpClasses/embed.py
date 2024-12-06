@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Dict, List
 import discord
-from utils.writePlayersInLobby import writePlayersInLobby
+from ...utils.writePlayersInLobby import writePlayersInLobby
 
 
 # class for embeded messages

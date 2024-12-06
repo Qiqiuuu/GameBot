@@ -1,6 +1,5 @@
 import discord.ui
-from utils.interactionUserMember import interactionUserMember
-from utils.interactionRespond import interactionRespond
+from ...utils.interactionRespond import interactionRespond
 
 
 class CasinoView(discord.ui.View):

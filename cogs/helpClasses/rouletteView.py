@@ -1,9 +1,9 @@
 import asyncio
 
 import discord
-from utils.interactionUserMember import interactionUserMember
-from utils.interactionRespond import interactionRespond
-from cogs.helpClasses.embed import Embed
+from ...utils.interactionUserMember import interactionUserMember
+from ...utils.interactionRespond import interactionRespond
+from ...cogs.helpClasses.embed import Embed
 
 
 class RouletteView(discord.ui.View):
